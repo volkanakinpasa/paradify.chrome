@@ -1,0 +1,1 @@
+# paradify.chrome
