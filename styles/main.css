@@ -1,0 +1,132 @@
+body, html {
+    margin: 0;
+    padding: 0px;
+    height: 500px;
+    width: 500px;
+    background-color: #ffffff;
+
+}
+iframe {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    height: 100%;
+    width: 100%;
+    border: 0
+}
+
+.center {
+    text-align: center;
+}
+
+#main {
+    margin-bottom: 5px;
+}
+
+.list-table {
+    font-size: 13px !important;
+    width: 750px;
+}
+
+.searchBox {
+    float: left;
+    width: 228px !important;
+}
+
+#waiting {
+
+    text-align: center;
+}
+
+#form {
+    margin-top: 15px;
+
+    text-align: center;
+}
+
+#waiting img {
+
+}
+
+#footer {
+    font-size: 20px;
+    text-align: left;
+    color:#ffffff;
+}
+.footer-desc{
+    text-align: left;
+    font-size: 14px;
+    color: #888888;
+}
+.margin-auto{
+    margin:auto;
+}
+
+.form-group{
+    width: 300px;
+}
+.float-left{
+    float: left;
+}
+
+#result{
+    margin:25px 0 0 0 ;
+}
+
+.history-ul {
+    list-style: none;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 11px;
+}
+
+.history-ul li{
+    margin: 2px 0;
+    font-size: 15px !important;
+}
+
+.history-ul li button{
+    padding: 1px 1px 1px 1px;
+    margin: 0px 6px 0px 0;
+    width: 35px;
+    height: 35px;
+    font-weight: bold;
+}
+.found-history {
+margin:15px 0 0 0;
+}
+
+#notFoundHistory {
+    color: white;
+    font-size: 11px;
+    padding:0 11px 0 0px;
+   
+}
+
+#notFoundHistory .desc {
+    padding:7px !important; background-color:transparent !important; border-color:#406100 !important;
+}
+
+.supported-links button{
+    padding: 3px;
+    margin: 2px 0 2px 0;
+    font-size: 11px !important;
+}
+
+.paypal {
+    text-align: right;
+    margin: 10px 0;
+    padding:0 10px 0 0;
+}
+
+.paypal a img {
+    width: 75px;
+}
+
+#iframe {
+    display: none;
+}
+
+#loading {
+    
+}
