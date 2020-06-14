@@ -1,0 +1,70 @@
+{
+  "manifest_version": 2,
+  "name": "Paradify - Youtube to Spotify",
+  "short_name": "Paradify",
+  "version": "4.2.24",
+  "permissions": [
+    "https://www.youtube.com/",
+    "http://www.jango.com/",
+    "https://tunein.com/",
+    "https://www.dailymotion.com/",
+    "https://vimeo.com/",
+    "https://soundcloud.com/",
+    "https://www.deezer.com/",
+    "http://www.radioparadise.com/",
+    "https://qmusic.nl/",
+    "http://www.radioswissjazz.ch/",
+    "http://www.powerapp.com.tr/",
+    "https://karnaval.com/",
+    "https://open.spotify.com/",
+    "https://www.beatport.com/",
+    "tabs",
+    "webNavigation",
+    "contextMenus",
+    "storage",
+    "https://api.spotify.com/",
+    "http://127.0.0.1:5500/",
+    "http://localhost:5001/*",
+    "https://localhost:5001/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "http://www.jango.com/*",
+        "https://tunein.com/*",
+        "https://www.dailymotion.com/*",
+        "https://vimeo.com/*",
+        "https://soundcloud.com/*",
+        "https://www.deezer.com/*",
+        "http://www.radioparadise.com/*",
+        "https://qmusic.nl/*",
+        "http://www.radioswissjazz.ch/*",
+        "http://www.powerapp.com.tr/*",
+        "https://karnaval.com/*",
+        "https://open.spotify.com/*",
+        "https://www.beatport.com/*",
+        "http://127.0.0.1:5500/server/*",
+        "https://127.0.0.1:5001/*"
+      ],
+      "js": ["content.bundle.js"]
+    }
+  ],
+  "options_page": "options.html",
+  "background": {
+    "page": "background.html"
+  },
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_title": "Add to Spotify"
+  },
+  "icons": {
+    "16": "16.png",
+    "48": "48.png",
+    "128": "128.png"
+  },
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "externally_connectable": {
+    "matches": ["https://localhost:5001/callback/*"]
+  }
+}
