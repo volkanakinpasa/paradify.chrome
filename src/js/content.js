@@ -23,6 +23,42 @@ String.format = function () {
   return s;
 };
 
+function getPageName(url) {
+  var pageName;
+  if (url.indexOf('radioparadise') > -1) {
+    pageName = 'radioparadise';
+  } else if (url.indexOf('powerapp') > -1) {
+    pageName = 'powerapp';
+  } else if (url.indexOf('youtube.com/watch') > -1) {
+    pageName = 'youtube';
+  } else if (url.indexOf('karnaval.com') > -1) {
+    pageName = 'karnaval';
+  } else if (url.indexOf('soundcloud.com') > -1) {
+    pageName = 'soundcloud';
+  } else if (url.indexOf('vimeo.com') > -1) {
+    pageName = 'vimeo';
+  } else if (url.indexOf('dailymotion.com') > -1) {
+    pageName = 'dailymotion';
+  } else if (url.indexOf('kralmuzik.com.tr') > -1) {
+    pageName = 'kralmuzik';
+  } else if (url.indexOf('tunein.com') > -1) {
+    pageName = 'tunein';
+  } else if (url.indexOf('jango.com') > -1) {
+    pageName = 'jango';
+  } else if (url.indexOf('qmusic.nl') > -1) {
+    pageName = 'qmusic';
+  } else if (url.indexOf('deezer') > -1) {
+    pageName = 'deezer';
+  } else if (url.indexOf('radioswissjazz') > -1) {
+    pageName = 'radioswissjazz';
+  } else if (url.indexOf('open.spotify') > -1) {
+    pageName = 'spotify';
+  } else if (url.indexOf('beatport.com') > -1) {
+    pageName = 'beatport';
+  }
+
+  return pageName;
+}
 function readNowPlayingText(pageName) {
   if (
     pageName == 'radioparadise' &&
@@ -65,36 +101,36 @@ function readNowPlayingText(pageName) {
   }
 }
 
-// function readRadioParadise() {
-//   var iframe = document.getElementById('content');
-//   if (iframe != undefined) {
-//     var innerDoc = iframe.contentDocument
-//       ? iframe.contentDocument
-//       : iframe.contentWindow.document;
-//     var c = innerDoc.getElementsByClassName('song_title');
-//     var data = c[3].innerText;
-//     var arr = data.split('—');
-//     var result = {
-//       track: arr[0].replace(/^\s*|\s*$/g, ''),
-//       artist: arr[1].replace(/^\s*|\s*$/g, ''),
-//     };
-//     return result;
-//   }
-//   return null;
-// }
+function readRadioParadise() {
+  var iframe = document.getElementById('content');
+  if (iframe != undefined) {
+    var innerDoc = iframe.contentDocument
+      ? iframe.contentDocument
+      : iframe.contentWindow.document;
+    var c = innerDoc.getElementsByClassName('song_title');
+    var data = c[3].innerText;
+    var arr = data.split('—');
+    var result = {
+      track: arr[0].replace(/^\s*|\s*$/g, ''),
+      artist: arr[1].replace(/^\s*|\s*$/g, ''),
+    };
+    return result;
+  }
+  return null;
+}
 
-// function readPowerfm() {
-//   var currentSongDiv = document.getElementsByClassName('artistSongTitle')[0]
-//     .innerText;
-//   var track = currentSongDiv;
+function readPowerfm() {
+  var currentSongDiv = document.getElementsByClassName('artistSongTitle')[0]
+    .innerText;
+  var track = currentSongDiv;
 
-//   var currentSongDiv = document.getElementsByClassName('artistTitle')[0]
-//     .innerText;
-//   var artist = currentSongDiv;
+  var currentSongDiv = document.getElementsByClassName('artistTitle')[0]
+    .innerText;
+  var artist = currentSongDiv;
 
-//   var result = { track: track, artist: artist };
-//   return result;
-// }
+  var result = { track: track, artist: artist };
+  return result;
+}
 
 function readYoutube() {
   var track = document.title.trim().replace(' - YouTube', '');
@@ -251,18 +287,17 @@ var paradify = {
   pageLoad: function () {
     chrome.runtime.sendMessage({ type: 'clearBadge' });
     var url = window.location.href.toLowerCase();
-    var pageName = getPageName(url);
-    if (pageName != undefined) {
-      var trackInfo = paradify.getTrackInfo(pageName);
-      if (trackInfo != undefined && trackInfo.success) {
-        chrome.runtime.sendMessage({ type: 'setBadgeText', text: ' 1 ' });
-      }
+
+    var trackInfo = paradify.getTrackInfo(url);
+    if (trackInfo != undefined && trackInfo.success) {
+      chrome.runtime.sendMessage({ type: 'setBadgeText', data: ' 1 ' });
     }
   },
 
-  getTrackInfo: function (pageName) {
+  getTrackInfo: function (url) {
     var response = {};
     try {
+      var pageName = getPageName(url);
       var playingResult = readNowPlayingText(pageName);
 
       if (playingResult != null) {
@@ -273,7 +308,7 @@ var paradify = {
         response.success = true;
       } else {
         response.success = false;
-        response.errMessage = 'There is no playing song on this page';
+        response.errMessage = 'No track info';
       }
     } catch (err) {
       response.success = false;
@@ -299,14 +334,15 @@ var paradify = {
 
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message != undefined) {
-    if (
-      message.type == 'backgroundStarts' &&
-      message.details != undefined &&
-      message.details.url == window.location.href
-    ) {
-      paradify.pageLoad();
-    } else if (message.type == 'getTrackInfo') {
-      var trackInfo = paradify.getTrackInfo(message.pageName);
+    // if (
+    //   message.type == 'backgroundStarts' &&
+    //   message.details != undefined &&
+    //   message.details.url == window.location.href
+    // ) {
+    //   paradify.pageLoad();
+    // } else
+    if (message.type == 'getTrackInfo') {
+      var trackInfo = paradify.getTrackInfo(message.url);
       sendResponse(trackInfo);
     } else if (message.type == 'contextMenuClicked') {
       var returnUrl = paradify.contextMenuClicked(
@@ -316,3 +352,9 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     }
   }
 });
+
+const onLoad = () => {
+  paradify.pageLoad();
+};
+
+window.addEventListener('load', onLoad, false);

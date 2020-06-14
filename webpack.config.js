@@ -33,6 +33,16 @@ const buildPath = 'build';
 const publicPath = '/';
 const PORT = 8080;
 var options = {
+  devServer: {
+    hot: true,
+
+    open: true,
+    historyApiFallback: true,
+    index: 'popup.html',
+    port: PORT,
+    open: true,
+    publicPath,
+  },
   mode: process.env.NODE_ENV || 'development',
   entry: {
     popup: path.join(__dirname, 'src', 'js', 'popup.js'),
@@ -87,7 +97,7 @@ var options = {
   },
   plugins: [
     // clean the build folder
-    new CleanWebpackPlugin(),
+    // new CleanWebpackPlugin(),
     // expose and write the allowed env vars on the compiled bundle
     new webpack.EnvironmentPlugin(['NODE_ENV']),
     new MiniCssExtractPlugin({
@@ -97,16 +107,16 @@ var options = {
     new CopyWebpackPlugin([
       {
         from: 'src/manifest.json',
-        transform: function (content, path) {
-          // generates the manifest file using the package.json informations
-          return Buffer.from(
-            JSON.stringify({
-              description: process.env.npm_package_description,
-              version: process.env.npm_package_version,
-              ...JSON.parse(content.toString()),
-            })
-          );
-        },
+        // transform: function (content, path) {
+        //   // generates the manifest file using the package.json informations
+        //   return Buffer.from(
+        //     JSON.stringify({
+        //       description: process.env.npm_package_description,
+        //       version: process.env.npm_package_version,
+        //       ...JSON.parse(content.toString()),
+        //     })
+        //   );
+        // },
       },
       // {
       //   from: 'src/_locales/**/*',

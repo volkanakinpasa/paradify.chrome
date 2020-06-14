@@ -2,20 +2,12 @@ import '../img/16.png';
 import '../img/48.png';
 import '../img/128.png';
 
-const onTokenCompleted = (token, callback) => {
-  const { access_token, refresh_token } = token;
-
-  chrome.storage.sync.set({ token: token }, () => callback({ message: 'ok' }));
+const onTokenCompleted = (token) => {
+  chrome.storage.sync.set({ token: token });
 };
 
 function setBadgeText(text) {
-  chrome.browserAction.setBadgeText({ text: 'Hey' });
-  chrome.browserAction.setBadgeBackgroundColor({ color: '#FF55A9' });
-
-  var intervalID = setInterval(function () {
-    chrome.browserAction.setBadgeText({ text: text });
-    window.clearInterval(intervalID);
-  }, 2000);
+  chrome.browserAction.setBadgeText({ text });
 }
 
 function clearBadge() {
@@ -25,16 +17,16 @@ function clearBadge() {
 const messageListener = (message, serder, callback) => {
   switch (message.type) {
     case 'onPopupOpened':
-      console.log('popup clicked');
       console.log(message.data);
       break;
     case 'clearBadge':
       clearBadge();
       callback('OK');
+    case 'setBadgeText':
+      setBadgeText(message.data);
+      callback('OK');
       break;
     case 'onTokenCompleted':
-      console.log('onTokenCompleted');
-      console.log(message.data);
       onTokenCompleted(message.data.token, callback);
       break;
   }

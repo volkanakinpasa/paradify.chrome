@@ -1,16 +1,26 @@
+import { hot } from 'react-hot-loader/root';
 import React, { useEffect, useState } from 'react';
-import { getPageName } from './variable';
-import axios from 'axios';
+const axios = require('axios').create();
+import { Service } from 'axios-middleware';
 import playUrl from '../../img/play.png';
 import pauseUrl from '../../img/pause.png';
-import '../../css/notification.css';
+import '../../css/index.css';
+import {
+  getRedirectAuthUrl,
+  getSearchUrl,
+  getPlaylistrl,
+  getMeUrl,
+  getRefreshUrl,
+} from '../utils/constants';
 
 const extensionId = 'bekjegdpflamfhmjofgomolbpgnjakbb';
-function Test() {
+
+function Index() {
   const [token, setToken] = useState(null);
   const [track, setTrack] = useState(null);
   const [playlist, setPlaylist] = useState(null);
-  const [searchItems, setSearchItems] = useState(null);
+  const [searchResult, setSearchResult] = useState(null);
+  const [searchReady, setSearchReady] = useState(null);
   const [me, setMe] = useState(null);
   const [pageRead, setPageReady] = useState(true);
   const [playlistSelectedValue, setPlaylistSelectedValue] = useState(true);
@@ -22,38 +32,38 @@ function Test() {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       var url = tabs[0].url.toLowerCase();
 
-      var pageName = getPageName(url);
       chrome.tabs.sendMessage(
         tabs[0].id,
-        { type: 'getTrackInfo', pageName: pageName },
+        { type: 'getTrackInfo', url },
         function (data) {
           if (data != undefined && data.success && data.track != undefined) {
             setTrack(data.track);
-          } //else {
-          //   var url = String.format('{0}?fromChrome=true', defaults.url);
-          //   redirect(url);
-          // }
+          } else {
+            showError(data.errMessage);
+            setPageReady();
+          }
         }
       );
     });
   };
 
   const start = () => {
-    chrome.runtime.sendMessage(extensionId, { type: 'clearBadge' }, (data) => {
-      const hede = data;
-    });
+    chrome.runtime.sendMessage(extensionId, { type: 'clearBadge' });
 
     chrome.storage.sync.get(['token'], (data) => {
-      setToken(data.token);
+      console.log('data', data);
       if (
         !data.token ||
         !data.token.access_token ||
         !data.token.refresh_token
       ) {
-        const url = 'https://localhost:5001/api/redirect_auth';
+        const url = getRedirectAuthUrl();
         console.log('redirect');
-        chrome.tabs.create({ url });
+
+        //chrome.tabs.create({ url });
       } else {
+        console.log(data.token);
+        setToken(data.token);
         // //temp delete this
         // const trackI = {
         //   track: {
@@ -68,35 +78,125 @@ function Test() {
     });
   };
 
+  const refreshToken = async () => {
+    return await axios.get(getRefreshUrl(), {
+      params: {
+        refresh_token: token.refresh_token,
+      },
+    });
+  };
+
+  // const handleApiError = (error, response) => {
+  //   console.log('api error', error);
+
+  //   switch (error.status) {
+  //     case 401:
+  //       response = refreshToken();
+  //       bread;
+  //   }
+  // };
+
   useEffect(() => {
     start();
-
-    // chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    //   chrome.runtime.sendMessage({
-    //     type: 'onPopupOpened',
-    //     data: { key: 'test key' },
-    //   });
-    // });
   }, []);
 
-  useEffect(() => {
-    if (!track) return;
-    // var query = String.format('{0} {1}', data.track, data.artist);
-    // var url = String.format(
-    //   '{0}{1}?q={2}&p={3}&fromChrome=true',
-    //   defaults.url,
-    //   defaults.searchPath,
-    //   encodeURIComponent(query),
-    //   pageName
-    // );
-    // redirect(url);
+  const interceptAxios = () => {
+    // axios.interceptors.response.use(response, (error) => {
+    //   //if (error.config && error.response && error.response.status === 401) {
+    //   if (response && response.data && response.data.status === 401) {
+    //     return refreshToken().then((responseGet) => {
+    //       if (
+    //         responseGet &&
+    //         responseGet.data &&
+    //         responseGet.data.access_token
+    //       ) {
+    //         const tempToken = { ...token };
+    //         tempToken.access_token = responseGet.data.access_token;
+    //         setToken(tempToken);
+    //       }
+
+    //       return axios.request(response.config);
+    //     });
+    //   }
+
+    //   return Promise.reject(error);
+    // });
+    let temp_access_token;
+    const service = new Service(axios);
+    service.register({
+      onRequest(config) {
+        if (temp_access_token) {
+          config.headers['access_token'] = temp_access_token;
+        } else {
+          if (!config.headers['access_token'])
+            config.headers['access_token'] = token.access_token;
+        }
+
+        config.headers['refresh_token'] = token.refresh_token;
+        config.headers['token_type'] = token.token_type;
+        return config;
+      },
+
+      onResponse(response) {
+        console.log('onResponse', response);
+        const { data } = response;
+        let d = null;
+        if (typeof data === 'string') d = JSON.parse(data);
+        else d = data;
+
+        if (d.error && d.error.status === 401) {
+          return axios
+            .get(getRefreshUrl(), {
+              params: {
+                refresh_token: token.refresh_token,
+              },
+            })
+            .then((responseGet) => {
+              console.log('refresh token then', responseGet);
+              if (
+                responseGet &&
+                responseGet.data &&
+                responseGet.data.access_token
+              ) {
+                const { ...tempToken } = token;
+                tempToken.access_token = responseGet.data.access_token;
+                temp_access_token = responseGet.data.access_token;
+                setToken(tempToken);
+                response.config.headers['access_token'] =
+                  tempToken.access_token;
+                return axios.request(response.config);
+              } else return Promise.reject();
+            })
+            .catch((error) => {
+              console.log('refresh token error', error);
+              return Promise.reject(error);
+            });
+          // .finally(() => {
+          //   return response;
+          // });
+        } else return response;
+      },
+    });
+  };
+
+  const getSearchResult = () => {
+    const query =
+      track.trackName + ' ' + (track.artistName ? track.artistName : '');
 
     axios
-      .get('http://localhost:3000/searchResult')
+      .get(getSearchUrl() + '?q=' + query)
       .then((response) => {
-        if (!response.data || !response.data.searchItem) return;
+        var i = 0;
+        const { data } = response;
+        let d = null;
+        if (typeof data === 'string') d = JSON.parse(data);
+        else d = data;
 
-        setSearchItems(response.data.searchItem);
+        if (d.error) {
+        } else {
+          setSearchResult(d);
+          setSearchReady(true);
+        }
       })
       .catch((error) => {
         // handle error
@@ -105,6 +205,13 @@ function Test() {
       .finally(() => {
         setPageReady(true);
       });
+  };
+
+  useEffect(() => {
+    if (!track) return;
+    interceptAxios();
+
+    getSearchResult();
   }, [track]);
 
   useEffect(() => {
@@ -114,19 +221,21 @@ function Test() {
 
   useEffect(() => {
     async function fetchData() {
-      if (!searchItems) return;
-      const meResponse = await axios.get('https://localhost:5001/api/me', {
-        headers: {
-          access_token: token.access_token,
-          refresh_token: token.refresh_token,
-        },
-      });
+      if (
+        !searchResult ||
+        !searchResult.tracks ||
+        searchResult.tracks.total === 0
+      )
+        return;
+      const meResponse = await axios.get(getMeUrl());
 
       if (!meResponse.data || !meResponse.data.id) return;
       setMe(meResponse.data);
       axios
-        .get('http://localhost:3000/getPlaylist', {
-          headers: { access_token: 'sdfasdfsdf', refresh_token: 'tegfresss' },
+        .get(getPlaylistrl(), {
+          params: {
+            profileId: meResponse.data.id,
+          },
         })
         .then((response) => {
           // handle success
@@ -142,7 +251,7 @@ function Test() {
         });
     }
     fetchData();
-  }, [searchItems]);
+  }, [searchResult]);
 
   const showError = (message) => {
     const model = { type: 'error', message };
@@ -168,11 +277,7 @@ function Test() {
       }
 
       try {
-        const response = await axios.post('http://localhost:3000/addpaylist', {
-          token: token,
-          track: trackId,
-          playlist: playlistSelectedValue,
-        });
+        const response = await axios.post('http://localhost:3000/addpaylist');
         console.log(response);
         showInfo('The track has been added to your playlist');
       } catch {
@@ -225,29 +330,31 @@ function Test() {
 
     return (
       <>
-        <div className='inline-block relative mb-4'>
+        <div className='mb-4'>
           <div className='mb-1'>Your playlist</div>
-          <select
-            className='block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-3 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline text-black'
-            id='grid-state'
-            onChange={handlePlaylistChange}
-          >
-            {playlist.items.map((item, i) => {
-              return (
-                <option key={i} value={item.id}>
-                  {item.name}
-                </option>
-              );
-            })}
-          </select>
-          <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700'>
-            <svg
-              className='fill-current h-4 w-4'
-              xmlns='http://www.w3.org/2000/svg'
-              viewBox='0 0 20 20'
+          <div className='inline-block relative'>
+            <select
+              className='block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-3 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline text-black'
+              id='grid-state'
+              onChange={handlePlaylistChange}
             >
-              <path d='M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z' />
-            </svg>
+              {playlist.items.map((item, i) => {
+                return (
+                  <option key={i} value={item.id}>
+                    {item.name}
+                  </option>
+                );
+              })}
+            </select>
+            <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700'>
+              <svg
+                className='fill-current h-4 w-4'
+                xmlns='http://www.w3.org/2000/svg'
+                viewBox='0 0 20 20'
+              >
+                <path d='M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z' />
+              </svg>
+            </div>
           </div>
         </div>
       </>
@@ -265,13 +372,12 @@ function Test() {
   const renderList = () => {
     return (
       <>
-        {searchItems.tracks.total > 0 && (
+        {searchResult.tracks.total > 0 && (
           <>
             <div className='min-w-full'>
               <div className='w-full border-t border-gray-700 border-opacity-50'>
-                {searchItems.tracks.total > 0 &&
-                  searchItems.tracks.items.map((item, i) => {
-                    //const refPlay = React.createRef();
+                {searchResult.tracks.total > 0 &&
+                  searchResult.tracks.items.map((item, i) => {
                     return (
                       <div key={i} className='flex w-full'>
                         <div className='pl-2 py-2 border-b border-gray-700 border-opacity-50 flex items-center'>
@@ -346,8 +452,8 @@ function Test() {
 
             <div className='px-5 py-5 flex flex-col xs:flex-row items-center xs:justify-between'>
               <span className='text-xs'>
-                Showing {searchItems.tracks.items.length} to{' '}
-                {searchItems.tracks.total}
+                Showing {searchResult.tracks.items.length} to{' '}
+                {searchResult.tracks.total}
               </span>
             </div>
           </>
@@ -361,24 +467,32 @@ function Test() {
       <div className='py-4'>
         <div className='flex justify-between items-center'>
           <div>
-            <h2 className='text-2xl font-semibold leading-tight'>Paradify</h2>
+            <h2 className='text-2xl font-semibold leading-tight text-white'>
+              Paradify
+            </h2>
           </div>
           <div className='flex-shrink-0 w-10 h-10'>{renderMe()}</div>
         </div>
         {track && (
           <div className='my-2'>
-            <h4 className='text-xl'>{track.trackName}</h4>
-            <h6 className='text-base'>{track.artistName}</h6>
+            <h4 className='text-base'>{track.trackName}</h4>
+            <h6 className='text-sm'>{track.artistName}</h6>
           </div>
         )}
         {renderMessageBox()}
-        <div className='py-2'>
+        <div className='pt-6 pb-2'>
           <div>{renderPlaylist()}</div>
           <div className='inline-block min-w-full shadow rounded-lg overflow-hidden'>
-            {searchItems ? renderList() : renderNoTrackFound()}
+            {searchReady
+              ? searchResult &&
+                searchResult.tracks &&
+                searchResult.tracks.total > 0
+                ? renderList()
+                : renderNoTrackFound()
+              : ''}
           </div>
         </div>
-        <div className='my-2 flex flex-col'>
+        {/* <div className='my-2 flex flex-col'>
           <div className='block relative'>
             <span className='text-black h-full absolute inset-y-0 left-0 flex items-center pl-2'>
               <svg viewBox='0 0 24 24' className='h-4 w-4 fill-current'>
@@ -386,11 +500,11 @@ function Test() {
               </svg>
             </span>
             <input
-              placeholder='Search'
+              placeholder=''
               className='text-gray-700 appearance-none rounded-r rounded-l border border-gray-700 border-b block pl-8 pr-6 py-2 w-full  text-sm focus:placeholder-gray-600 focus:outline-none'
             />
           </div>
-        </div>
+        </div> */}
       </div>
     );
   };
@@ -434,8 +548,13 @@ function Test() {
         );
     }
   };
-
-  return pageRead && render();
+  return (
+    <>
+      <div className='antialiased font-mono text-gray-300'>
+        <div className='mx-auto px-4'>{render()}</div>
+      </div>
+    </>
+  );
 }
 
-export default Test;
+export default hot(Index);
