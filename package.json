@@ -1,0 +1,43 @@
+{
+  "name": "chrome-extension-webpack",
+  "version": "0.0.1",
+  "description": "A boilerplate to chrome extension with webpack",
+  "scripts": {
+    "build:old": "node utils/build.js",
+    "dev": "NODE_ENV=development webpack-dev-server --config webpack.config.js --hot",
+    "build": "NODE_ENV=production webpack --config webpack.prod.config.js",
+    "start:old": "node utils/webserver.js"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "axios-middleware": "^0.3.1",
+    "react": "16.12.0",
+    "react-dom": "16.12.0",
+    "react-ga": "^3.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "7.7.4",
+    "@babel/preset-react": "7.7.4",
+    "babel-loader": "8.0.6",
+    "clean-webpack-plugin": "3.0.0",
+    "copy-webpack-plugin": "6.0.2",
+    "css-loader": "3.2.0",
+    "file-loader": "4.3.0",
+    "fs-extra": "8.1.0",
+    "html-loader": "0.5.5",
+    "html-webpack-plugin": "3.2.0",
+    "mini-css-extract-plugin": "^0.9.0",
+    "optimize-css-assets-webpack-plugin": "^5.0.3",
+    "postcss-loader": "^3.0.0",
+    "progress-bar-webpack-plugin": "^2.1.0",
+    "react-hot-loader": "4.12.18",
+    "sass-loader": "^8.0.2",
+    "style-loader": "1.0.0",
+    "tailwindcss": "^1.4.6",
+    "terser-webpack-plugin": "^3.0.6",
+    "webpack": "4.41.2",
+    "webpack-cli": "3.3.10",
+    "webpack-dev-server": "3.9.0",
+    "write-file-webpack-plugin": "4.5.1"
+  }
+}

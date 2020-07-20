@@ -1,0 +1,13 @@
+body,
+html {
+  margin: 0;
+  padding: 0px;
+  max-height: 500px;
+  width: 500px;
+  background-color: #181818;
+  color: white;
+}
+
+.gree-add-button {
+  background-color: #037d03;
+}
