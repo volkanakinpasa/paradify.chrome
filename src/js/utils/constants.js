@@ -32,12 +32,10 @@ const getRefreshUrl = () => {
   return path.join(URLS.BASE_URL, URLS.REFRESH_PATH);
 };
 
-const supportedWebsites = [
-  {
-    href: 'https://www.youtube.com/',
-    name: 'YouTube',
-  },
-];
+const supportedWebsite = {
+  href: 'https://www.youtube.com/',
+  name: 'YouTube',
+};
 
 export {
   getRedirectAuthUrl,
@@ -45,5 +43,5 @@ export {
   getMeUrl,
   getPlaylistUrl,
   getRefreshUrl,
-  supportedWebsites,
+  supportedWebsite,
 };

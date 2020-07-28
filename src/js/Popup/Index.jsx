@@ -14,7 +14,7 @@ import {
   getPlaylistUrl,
   getMeUrl,
   getRefreshUrl,
-  supportedWebsites,
+  supportedWebsite,
 } from '../utils/constants';
 import ReactGA from 'react-ga';
 
@@ -523,6 +523,32 @@ function Index() {
       </>
     );
   };
+  const renderSearchForm = () => {
+    return (
+      <>
+        <div className='mt-4'>
+          <form
+            onSubmit={(e) => {
+              if (refSearchInput.current) {
+                setTrackInfoBeforeSearch({
+                  trackName: refSearchInput.current.value,
+                });
+              }
+              e.preventDefault();
+            }}
+          >
+            <input
+              ref={refSearchInput}
+              type='text'
+              defaultValue={query}
+              className='text-gray-700 appearance-none rounded-r rounded-l border border-gray-700 border-b block pl-4 pr-4 py-2 w-full  text-sm focus:placeholder-gray-600 focus:outline-none'
+              placeholder='Or search a song here'
+            />
+          </form>
+        </div>
+      </>
+    );
+  };
   const renderSurvey = () => {
     return (
       <>
@@ -665,33 +691,34 @@ function Index() {
   const renderInitial = () => {
     return (
       <div>
-        <div className='text-md text-orange-400 mb-4'>
-          Please run Paradify extension while you are on YouTube and watching
-          something
+        <div className='text-md text-orange-400 mt-4'>
+          <div>
+            Open{' '}
+            <button
+              className='font-semibold underline'
+              onClick={() => {
+                ReactGA.event({
+                  category: 'Off Site',
+                  action: 'Supported Website Click',
+                  label: decodeURIComponent(supportedWebsite.name),
+                });
+                setTimeout(() => {
+                  chrome.tabs.create({ url: supportedWebsite.href });
+                }, 300);
+              }}
+            >
+              {supportedWebsite.name}
+            </button>
+            , watch a song, click Paradify...
+          </div>
+          <div className='mt-4'>
+            <img
+              src='https://media.giphy.com/media/26n6WywJyh39n1pBu/giphy.gif'
+              alt=''
+            />
+          </div>
         </div>
-        <div className='flex flex-row flex-wrap justify-end'>
-          {supportedWebsites.map((item, i) => {
-            return (
-              <div key={i} className='mr-2 my-2'>
-                <button
-                  className='h-8 px-4 btn bg-blue-500 text-white-700 font-semibold rounded'
-                  onClick={() => {
-                    ReactGA.event({
-                      category: 'Off Site',
-                      action: 'Supported Website Click',
-                      label: decodeURIComponent(item.name),
-                    });
-                    setTimeout(() => {
-                      chrome.tabs.create({ url: item.href });
-                    }, 300);
-                  }}
-                >
-                  {item.name}
-                </button>
-              </div>
-            );
-          })}
-        </div>
+        {renderSearchForm()}
       </div>
     );
   };
@@ -707,93 +734,27 @@ function Index() {
             });
             const url = getRedirectAuthUrl();
             setTimeout(() => {
-              chrome.tabs.create({ url });
+              var w = 650;
+              var h = 600;
+              var left = screen.width / 2 - w / 2;
+              var top = screen.height / 2 - h / 2;
+              chrome.windows.create(
+                {
+                  url,
+                  type: 'popup',
+                  width: w,
+                  height: h,
+                  left: left,
+                  top: top,
+                },
+                (window) => {}
+              );
             }, 300);
           }}
         >
           Login
         </button>
       </div>
-    );
-  };
-
-  const render = () => {
-    return (
-      <>
-        <div className='flex justify-between items-center'>
-          <div className='flex items-baseline'>
-            <h2 className='text-2xl font-semibold leading-tight'>Paradify</h2>
-            <div className='ml-1 flex items-center'>
-              integrated with{' '}
-              <img
-                src={spotifyLogoGreen}
-                width='70'
-                height='21'
-                className='ml-1'
-              />
-            </div>
-          </div>
-          <div className='flex-shrink-0 w-10'>{renderMe()}</div>
-        </div>
-        {!loginNeeded && query && (
-          <>
-            <div className='my-2 text-white font-semibold'>
-              <h4 className='text-lg'>{query}</h4>
-            </div>
-          </>
-        )}
-        {renderMessageBox()}
-        <div>
-          <div>{!loginNeeded && renderPlaylist()}</div>
-          <div className='inline-block min-w-full shadow overflow-hidden'>
-            {!loginNeeded && searchReady ? (
-              <>
-                {searchResult &&
-                searchResult.tracks &&
-                searchResult.tracks.total > 0
-                  ? renderList()
-                  : renderNoTrackFound()}
-                <div>
-                  <div>Search</div>
-                  <div>
-                    <form
-                      onSubmit={(e) => {
-                        if (refSearchInput.current) {
-                          setQuery(refSearchInput.current.value);
-                        }
-                        e.preventDefault();
-                      }}
-                    >
-                      <input
-                        ref={refSearchInput}
-                        type='text'
-                        defaultValue={query}
-                        className='text-gray-700 appearance-none rounded-r rounded-l border border-gray-700 border-b block pl-4 pr-4 py-2 w-full  text-sm focus:placeholder-gray-600 focus:outline-none'
-                      />
-                    </form>
-                  </div>
-                </div>
-                {renderSurvey()}
-              </>
-            ) : (
-              ''
-            )}
-            {loginNeeded ? (
-              <>
-                <div className='text-base mb-4'>
-                  You need to login in order to use Paradify
-                </div>
-              </>
-            ) : (
-              <>
-                {!trackInfoBeforeSearch && !searchReady && (
-                  <>{renderInitial()}</>
-                )}
-              </>
-            )}
-          </div>
-        </div>
-      </>
     );
   };
 
@@ -836,6 +797,89 @@ function Index() {
         );
     }
   };
+
+  const render = () => {
+    return (
+      <>
+        <div className='flex justify-between items-center'>
+          <div className='flex items-baseline'>
+            <h2 className='text-2xl font-semibold leading-tight'>Paradify</h2>
+            <div className='ml-1 flex items-center'>
+              integrated with{' '}
+              <img
+                src={spotifyLogoGreen}
+                width='70'
+                height='21'
+                className='ml-1'
+              />
+            </div>
+          </div>
+          <div className='flex-shrink-0 w-10'>{renderMe()}</div>
+        </div>
+        {!loginNeeded && query && (
+          <>
+            <div className='my-2 text-white font-semibold'>
+              <h4 className='text-lg'>{query}</h4>
+            </div>
+          </>
+        )}
+        {renderMessageBox()}
+        <div>
+          <div>{!loginNeeded && renderPlaylist()}</div>
+          <div className='inline-block min-w-full shadow overflow-hidden'>
+            {!loginNeeded && searchReady ? (
+              <>
+                {searchResult &&
+                searchResult.tracks &&
+                searchResult.tracks.total > 0
+                  ? renderList()
+                  : renderNoTrackFound()}
+                {renderSearchForm()}
+              </>
+            ) : (
+              ''
+            )}
+            {loginNeeded ? (
+              <>
+                <div className='text-sm text-orange-400 my-4'>
+                  <p>Please click 'Login' to start using Paradify.</p>
+                  <p className='mt-4'>
+                    <img
+                      src='https://media.giphy.com/media/3orif3HlX3i4fDdqCY/giphy.gif'
+                      alt=''
+                    />
+                  </p>
+                </div>
+              </>
+            ) : (
+              <>
+                {!trackInfoBeforeSearch && !searchReady && (
+                  <>{renderInitial()}</>
+                )}
+              </>
+            )}
+            <div className='text-right'>
+              <button
+                onClick={() => {
+                  ReactGA.event({
+                    category: 'On Site',
+                    action: 'Contact Click',
+                  });
+                  const url = 'https://forms.gle/LPnQpiLchg2oHb6MA';
+                  setTimeout(() => {
+                    chrome.tabs.create({ url });
+                  }, 300);
+                }}
+              >
+                Contact
+              </button>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  };
+
   return (
     <>
       <div className='antialiased font-mono text-gray-300'>

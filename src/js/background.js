@@ -49,6 +49,8 @@ chrome.runtime.onInstalled.addListener(function (details) {
   }
 });
 
+chrome.runtime.setUninstallURL('https://forms.gle/bBaMUH2m16VH3o3J6', () => {});
+
 var div = document.createElement('div');
 div.cssText =
   'position: absolute: width: 200px; height: 200px; z-index: 99999; right: 0; top: 0';
