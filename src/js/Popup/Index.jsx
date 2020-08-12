@@ -7,6 +7,9 @@ import pauseUrl from '../../img/pause_m.png';
 import goodUrl from '../../img/good.png';
 import badUrl from '../../img/bad.png';
 import spotifyLogoGreen from '../../img/Spotify_Logo_RGB_Green_icon.png';
+import imageSearchNotFound from '../../img/giphy/search-not-found.gif';
+import imageLetsStart from '../../img/giphy/lets-get-started.gif';
+import imageSignin from '../../img/giphy/sign-in.gif';
 import '../../css/index.css';
 import {
   getRedirectAuthUrl,
@@ -268,6 +271,32 @@ function Index() {
     setPlaylistSelectedValue(playlist.items[0].id);
   }, [playlist]);
 
+  const loadPlaylist = (me) => {
+    if (playlist) return;
+
+    axios
+      .get(getPlaylistUrl(), {
+        params: {
+          profileId: me.id,
+        },
+      })
+      .then((response) => {
+        // handle success
+        const { data } = response;
+        data.items = data.items.filter((item) => item.owner.id === me.id);
+        setPlaylist(data);
+      })
+      .catch((error) => {
+        ReactGA.event({
+          category: 'Error',
+          action: 'Playlist Get Error',
+        });
+      })
+      .finally(() => {
+        // always executed
+      });
+  };
+
   useEffect(() => {
     async function fetchData() {
       if (
@@ -278,28 +307,7 @@ function Index() {
         return;
 
       if (!me || !me.id) return;
-
-      axios
-        .get(getPlaylistUrl(), {
-          params: {
-            profileId: me.id,
-          },
-        })
-        .then((response) => {
-          // handle success
-          const { data } = response;
-          data.items = data.items.filter((item) => item.owner.id === me.id);
-          setPlaylist(data);
-        })
-        .catch((error) => {
-          ReactGA.event({
-            category: 'Error',
-            action: 'Playlist Get Error',
-          });
-        })
-        .finally(() => {
-          // always executed
-        });
+      loadPlaylist(me);
     }
     fetchData();
   }, [searchResult, me]);
@@ -517,8 +525,9 @@ function Index() {
   const renderNoTrackFound = () => {
     return (
       <>
-        <div className='min-w-full mb-2'>
+        <div className='min-w-full mb-2 text-center'>
           No track found. You may filter your search.
+          <img src={imageSearchNotFound} alt='' className='w-full' />
         </div>
       </>
     );
@@ -712,10 +721,7 @@ function Index() {
             , watch a song, click Paradify...
           </div>
           <div className='mt-4'>
-            <img
-              src='https://media.giphy.com/media/26n6WywJyh39n1pBu/giphy.gif'
-              alt=''
-            />
+            <img src={imageLetsStart} alt='' />
           </div>
         </div>
         {renderSearchForm()}
@@ -825,7 +831,14 @@ function Index() {
         )}
         {renderMessageBox()}
         <div>
-          <div>{!loginNeeded && renderPlaylist()}</div>
+          <div>
+            {!loginNeeded &&
+              searchReady &&
+              searchResult &&
+              searchResult.tracks &&
+              searchResult.tracks.total > 0 &&
+              renderPlaylist()}
+          </div>
           <div className='inline-block min-w-full shadow overflow-hidden'>
             {!loginNeeded && searchReady ? (
               <>
@@ -844,10 +857,7 @@ function Index() {
                 <div className='text-sm text-orange-400 my-4'>
                   <p>Please click 'Login' to start using Paradify.</p>
                   <p className='mt-4'>
-                    <img
-                      src='https://media.giphy.com/media/3orif3HlX3i4fDdqCY/giphy.gif'
-                      alt=''
-                    />
+                    <img src={imageSignin} alt='' />
                   </p>
                 </div>
               </>
