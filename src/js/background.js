@@ -49,7 +49,10 @@ chrome.runtime.onInstalled.addListener(function (details) {
   }
 });
 
-chrome.runtime.setUninstallURL('https://forms.gle/bBaMUH2m16VH3o3J6', () => {});
+chrome.runtime.setUninstallURL(
+  'http://www.paradify.com/home/UnInstalled',
+  () => {}
+);
 
 var div = document.createElement('div');
 div.cssText =

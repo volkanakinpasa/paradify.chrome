@@ -272,8 +272,6 @@ function Index() {
   }, [playlist]);
 
   const loadPlaylist = (me) => {
-    if (playlist) return;
-
     axios
       .get(getPlaylistUrl(), {
         params: {
@@ -307,26 +305,31 @@ function Index() {
         return;
 
       if (!me || !me.id) return;
-      loadPlaylist(me);
+
+      if (!playlist) loadPlaylist(me);
     }
     fetchData();
   }, [searchResult, me]);
 
+  const loadMe = () => {
+    const url = getMeUrl();
+    axios
+      .get(url)
+      .then((meResponse) => {
+        if (!meResponse.data || !meResponse.data.id) return;
+        setMe(meResponse.data);
+      })
+      .catch((error) => {
+        ReactGA.event({
+          category: 'Error',
+          action: 'Me Get Error',
+        });
+      });
+  };
+
   useEffect(() => {
     if (token && !me) {
-      const url = getMeUrl();
-      axios
-        .get(url)
-        .then((meResponse) => {
-          if (!meResponse.data || !meResponse.data.id) return;
-          setMe(meResponse.data);
-        })
-        .catch((error) => {
-          ReactGA.event({
-            category: 'Error',
-            action: 'Me Get Error',
-          });
-        });
+      loadMe();
     }
   }, [searchResult]);
 
@@ -721,7 +724,7 @@ function Index() {
             , watch a song, click Paradify...
           </div>
           <div className='mt-4'>
-            <img src={imageLetsStart} alt='' />
+            <img src={imageLetsStart} alt='' className='w-full' />
           </div>
         </div>
         {renderSearchForm()}
