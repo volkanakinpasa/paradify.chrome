@@ -11,6 +11,10 @@ import imageSearchNotFound from '../../img/giphy/search-not-found.gif';
 import imageLetsStart from '../../img/giphy/lets-get-started.gif';
 import imageSignin from '../../img/giphy/sign-in.gif';
 import '../../css/index.css';
+import { initializeReactGA, getSearchTextFromTrackInfo } from '../utils';
+
+import ReactGA from 'react-ga';
+
 import {
   getRedirectAuthUrl,
   getSearchUrl,
@@ -19,7 +23,6 @@ import {
   getRefreshUrl,
   supportedWebsite,
 } from '../utils/constants';
-import ReactGA from 'react-ga';
 
 const extensionId = chrome.runtime.id;
 
@@ -41,17 +44,6 @@ function Index() {
   const [showSurvey, setShowSurvey] = useState(false);
   const refPlaylist = React.useRef();
   const refSearchInput = React.useRef();
-
-  function initializeReactGA() {
-    ReactGA.initialize('UA-3218083-16');
-    ReactGA.set({ checkProtocolTask: () => {} });
-    ReactGA.pageview('/popup');
-
-    ReactGA.event({
-      category: 'On Site',
-      action: 'Page Load',
-    });
-  }
 
   const readTrackInfoFromThepage = () => {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -185,26 +177,12 @@ function Index() {
       }
     });
 
-    initializeReactGA();
+    initializeReactGA(ReactGA, 'popup');
   };
 
   useEffect(() => {
     start();
   }, []);
-
-  const getSearchTextFromTrackInfo = () => {
-    let q = '';
-    if (trackInfoBeforeSearch) {
-      q =
-        trackInfoBeforeSearch.trackName +
-        ' ' +
-        (trackInfoBeforeSearch.artistName
-          ? trackInfoBeforeSearch.artistName
-          : '');
-    }
-
-    return q;
-  };
 
   const search = (q) => {
     ReactGA.event({
@@ -254,7 +232,7 @@ function Index() {
   useEffect(() => {
     if (!trackInfoBeforeSearch) return;
     interceptAxios();
-    const q = getSearchTextFromTrackInfo();
+    const q = getSearchTextFromTrackInfo(trackInfoBeforeSearch);
     setQuery(q);
   }, [trackInfoBeforeSearch]);
 

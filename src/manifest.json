@@ -3,7 +3,7 @@
   "name": "Paradify - Youtube to Spotify",
   "short_name": "Paradify",
   "description": "Add a track from Youtube to Spotify playlist",
-  "version": "5.0.4",
+  "version": "5.0.6",
   "permissions": ["activeTab", "storage"],
   "content_scripts": [
     {
@@ -24,6 +24,7 @@
     "48": "48.png",
     "128": "128.png"
   },
+  "web_accessible_resources": ["Spotify_Icon_RGB_Green.png"],
   "content_security_policy": "script-src 'self' https://www.google-analytics.com; object-src 'self'",
   "externally_connectable": {
     "matches": [
