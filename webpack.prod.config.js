@@ -106,15 +106,15 @@ var options = {
         {
           from: 'src/manifest.json',
           to: 'manifest.json',
-          transform(content, absoluteFrom) {
-            const jsonObject = JSON.parse(content.toString());
-            jsonObject.externally_connectable = {
-              matches: ['http://www.paradify.com/callback/*'],
-            };
-            jsonObject.permissions.push('http://www.paradify.com/api/*');
+          // transform(content, absoluteFrom) {
+          //   const jsonObject = JSON.parse(content.toString());
+          //   jsonObject.externally_connectable = {
+          //     matches: ['http://www.paradify.com/callback/*'],
+          //   };
+          //   jsonObject.permissions.push('http://www.paradify.com/api/*');
 
-            return Buffer.from(JSON.stringify(jsonObject));
-          },
+          //   return Buffer.from(JSON.stringify(jsonObject));
+          // },
         },
       ],
     }),

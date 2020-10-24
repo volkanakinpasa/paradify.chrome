@@ -3,10 +3,9 @@
   "version": "0.0.1",
   "description": "A boilerplate to chrome extension with webpack",
   "scripts": {
-    "build:old": "node utils/build.js",
     "dev": "NODE_ENV=development webpack-dev-server --config webpack.config.js --hot",
     "build": "NODE_ENV=production webpack --config webpack.prod.config.js",
-    "start:old": "node utils/webserver.js"
+    "lint": "eslint"
   },
   "dependencies": {
     "axios": "^0.19.2",
@@ -19,9 +18,12 @@
     "@babel/core": "^7.10.5",
     "@babel/preset-react": "^7.10.4",
     "babel-loader": "^8.1.0",
+    "babel-preset-react": "^6.24.1",
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^6.0.3",
     "css-loader": "^3.6.0",
+    "eslint": "^7.7.0",
+    "eslint-plugin-react": "^7.20.6",
     "file-loader": "^4.3.0",
     "fs-extra": "^8.1.0",
     "html-loader": "^0.5.5",

@@ -3,7 +3,7 @@ import spotifyLogoGreen from '../../img/Spotify_Icon_RGB_Green.png';
 import {
   paradify,
   getSearchTextFromTrackInfo,
-  filterQuery,
+  getSpotifySearchUrl,
   contentSpotifyAddButtonStyle,
 } from '../utils';
 
@@ -15,10 +15,7 @@ function AddButtonContainer() {
         onClick={() => {
           var trackInfo = paradify.getTrackInfo(location.href);
           const query = getSearchTextFromTrackInfo(trackInfo.track);
-          window.open(
-            `https://open.spotify.com/search/${filterQuery(query)}`,
-            '_blank'
-          );
+          window.open(getSpotifySearchUrl(query), '_blank');
           chrome.runtime.sendMessage(
             {
               type: 'addIconClicked',

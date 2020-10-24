@@ -311,6 +311,11 @@ const filterQuery = (query) => {
 
   return query;
 };
+
+const getSpotifySearchUrl = (query) => {
+  return `https://open.spotify.com/search/${filterQuery(query)}`;
+};
+
 const contentSpotifyAddButtonStyle = {
   width: '30px',
   padding: '0',
@@ -323,6 +328,6 @@ export {
   initializeReactGA,
   getSearchTextFromTrackInfo,
   paradify,
-  filterQuery,
+  getSpotifySearchUrl,
   contentSpotifyAddButtonStyle,
 };
