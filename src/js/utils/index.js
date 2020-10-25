@@ -317,11 +317,16 @@ const getSpotifySearchUrl = (query) => {
 };
 
 const contentSpotifyAddButtonStyle = {
-  width: '30px',
   padding: '0',
   border: 'none',
   backgroundColor: 'transparent',
   cursor: 'pointer',
+};
+
+const imageSpotifyAddButtonStyle = {
+  width: '24px',
+  height: '24px',
+  margin: '8px',
 };
 
 export {
@@ -330,4 +335,5 @@ export {
   paradify,
   getSpotifySearchUrl,
   contentSpotifyAddButtonStyle,
+  imageSpotifyAddButtonStyle,
 };
