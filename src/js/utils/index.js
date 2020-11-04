@@ -324,9 +324,12 @@ const contentSpotifyAddButtonStyle = {
 };
 
 const imageSpotifyAddButtonStyle = {
-  width: '24px',
-  height: '24px',
-  margin: '8px',
+  height: '60%',
+  top: '0px',
+  bottom: '0px',
+  display: 'block',
+  margin: 'auto',
+  width: '60%',
 };
 
 export {
