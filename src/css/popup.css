@@ -11,3 +11,12 @@ html {
 .gree-add-button {
   background-color: #037d03;
 }
+
+.arrow {
+  border-right: 3px solid white;
+  border-bottom: 3px solid white;
+  width: 10px;
+  height: 10px;
+  transform: rotate(-45deg);
+  margin: 0 10px;
+}

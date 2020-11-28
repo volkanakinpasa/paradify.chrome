@@ -1,5 +1,3 @@
-import constant from './constants';
-
 const getSearchTextFromTrackInfo = (trackInfo) => {
   let q = '';
   if (trackInfo) {
@@ -35,6 +33,7 @@ var defaults = {
   formId: '#form',
   waitingId: '#waiting',
   events: { ENTER: 13 },
+  test: '2',
 };
 
 String.format = function () {
@@ -142,7 +141,7 @@ function readsoundCloud() {
 
   var artist = document
     .getElementsByClassName(
-      'playbackSoundBadge__lightLink sc-link-light sc-truncate'
+      'playbackSoundBadge__lightLink sc-link-light sc-truncate',
     )[0]
     .getAttribute('title');
   var result;
@@ -175,11 +174,7 @@ function readKralmuzik() {
   var track = currentSongDiv.getElementsByTagName('h2')[0].innerText;
 
   var artist = currentSongDiv.getElementsByTagName('h1')[0].innerText;
-
-  radio - stream - next - song;
-
   var result = { track: track, artist: artist };
-
   return result;
 }
 
@@ -241,11 +236,13 @@ function readBeatport() {
 
 var paradify = {
   pageLoad: function () {
+    // eslint-disable-next-line no-undef
     chrome.runtime.sendMessage({ type: 'clearBadge' });
     var url = window.location.href.toLowerCase();
 
     var trackInfo = paradify.getTrackInfo(url);
     if (trackInfo != undefined && trackInfo.success) {
+      // eslint-disable-next-line no-undef
       chrome.runtime.sendMessage({ type: 'setBadgeText', data: ' 1 ' });
     }
   },
@@ -281,7 +278,7 @@ var paradify = {
       '{0}{1}?q={2}',
       defaults.url,
       defaults.searchPath,
-      text
+      text,
     );
 
     return url;
@@ -311,18 +308,32 @@ const filterQuery = (query) => {
 
   return query;
 };
+
+const getSpotifySearchUrl = (query) => {
+  return `https://open.spotify.com/search/${filterQuery(query)}`;
+};
+
 const contentSpotifyAddButtonStyle = {
-  width: '30px',
   padding: '0',
   border: 'none',
   backgroundColor: 'transparent',
   cursor: 'pointer',
 };
 
+const imageSpotifyAddButtonStyle = {
+  height: '60%',
+  top: '0px',
+  bottom: '0px',
+  display: 'block',
+  margin: 'auto',
+  width: '60%',
+};
+
 export {
   initializeReactGA,
   getSearchTextFromTrackInfo,
   paradify,
-  filterQuery,
+  getSpotifySearchUrl,
   contentSpotifyAddButtonStyle,
+  imageSpotifyAddButtonStyle,
 };

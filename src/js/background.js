@@ -25,11 +25,14 @@ const addIconClicked = (data) => {
     document,
     'script',
     'https://www.google-analytics.com/analytics.js',
-    'ga'
+    'ga',
   );
+  // eslint-disable-next-line no-undef
   ga('create', 'UA-3218083-16', 'auto');
   // see: http://stackoverflow.com/a/22152353/1958200
+  // eslint-disable-next-line no-undef
   ga('set', 'checkProtocolTask', function () {});
+  // eslint-disable-next-line no-undef
   ga('send', {
     hitType: 'event',
     eventCategory,
@@ -39,15 +42,18 @@ const addIconClicked = (data) => {
 };
 
 const onTokenCompleted = (token) => {
+  // eslint-disable-next-line no-undef
   chrome.storage.sync.set({ token: token });
 };
 
 function setBadgeText(text) {
+  // eslint-disable-next-line no-undef
   chrome.browserAction.setBadgeText({ text });
   setTimeout(() => clearBadge(), 5000);
 }
 
 function clearBadge() {
+  // eslint-disable-next-line no-undef
   chrome.browserAction.setBadgeText({ text: '' });
 }
 
@@ -59,10 +65,10 @@ const messageListener = (message, serder, callback) => {
     case 'clearBadge':
       clearBadge();
       callback('OK');
+      break;
     case 'setBadgeText':
       setBadgeText(message.data);
       callback('OK');
-
       break;
     case 'onTokenCompleted':
       onTokenCompleted(message.data.token, callback);
@@ -73,25 +79,27 @@ const messageListener = (message, serder, callback) => {
       break;
   }
 };
+// eslint-disable-next-line no-undef
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   messageListener(message, sender, sendResponse);
 });
-
+// eslint-disable-next-line no-undef
 chrome.runtime.onMessageExternal.addListener(function (message, sender) {
   messageListener(message, sender, () => {});
 });
-
+// eslint-disable-next-line no-undef
 chrome.runtime.onInstalled.addListener(function (details) {
   if (details.reason == 'install') {
+    // eslint-disable-next-line no-undef
     chrome.tabs.create({
       url: 'http://www.paradify.com/home/Installed',
     });
   }
 });
-
+// eslint-disable-next-line no-undef
 chrome.runtime.setUninstallURL(
   'http://www.paradify.com/home/UnInstalled',
-  () => {}
+  () => {},
 );
 
 var div = document.createElement('div');

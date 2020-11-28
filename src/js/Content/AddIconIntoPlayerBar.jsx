@@ -5,12 +5,14 @@ import {
   getSearchTextFromTrackInfo,
   getSpotifySearchUrl,
   contentSpotifyAddButtonStyle,
+  imageSpotifyAddButtonStyle,
 } from '../utils';
 
-function AddButtonContainer() {
+function AddIconIntoPlayerBar() {
   return (
     <>
       <button
+        id="paradify"
         style={contentSpotifyAddButtonStyle}
         onClick={() => {
           var trackInfo = paradify.getTrackInfo(location.href);
@@ -32,16 +34,21 @@ function AddButtonContainer() {
             },
           );
         }}
+        draggable="false"
+        className="playerButton ytp-button"
+        title="Add to Spotify"
       >
         <img
           // eslint-disable-next-line no-undef
           src={chrome.runtime.getURL(spotifyLogoGreen)}
-          width="30"
+          width="24"
+          height="24"
           title="Add to Spotify"
+          style={imageSpotifyAddButtonStyle}
         />
       </button>
     </>
   );
 }
 
-export default AddButtonContainer;
+export default AddIconIntoPlayerBar;

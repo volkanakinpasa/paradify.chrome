@@ -116,14 +116,14 @@ var options = {
         {
           from: 'src/manifest.json',
           to: 'manifest.json',
-          transform(content, absoluteFrom) {
-            const jsonObject = JSON.parse(content.toString());
-            jsonObject.externally_connectable = {
-              matches: ['https://localhost:5001/callback/*'],
-            };
-            jsonObject.permissions.push('https://localhost:5001/api/*');
-            return Buffer.from(JSON.stringify(jsonObject));
-          },
+          // transform(content, absoluteFrom) {
+          //   const jsonObject = JSON.parse(content.toString());
+          //   jsonObject.externally_connectable = {
+          //     matches: ['https://localhost:5001/callback/*'],
+          //   };
+          //   jsonObject.permissions.push('https://localhost:5001/api/*');
+          //   return Buffer.from(JSON.stringify(jsonObject));
+          // },
         },
       ],
     }),

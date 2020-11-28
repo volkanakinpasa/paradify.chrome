@@ -1,12 +1,14 @@
 {
-  "name": "chrome-extension-webpack",
+  "name": "paradify-chrome-extension",
   "version": "0.0.1",
-  "description": "A boilerplate to chrome extension with webpack",
+  "description": "paradify-chrome-extension",
   "scripts": {
-    "build:old": "node utils/build.js",
     "dev": "NODE_ENV=development webpack-dev-server --config webpack.config.js --hot",
     "build": "NODE_ENV=production webpack --config webpack.prod.config.js",
-    "start:old": "node utils/webserver.js"
+    "lint": "eslint \"src/**/*.{js,jsx}\"",
+    "lint:fix": "eslint \"src/**/*.{js,jsx}\" --fix",
+    "format": "prettier --write \"src/**/*.{js,jsx}\"",
+    "lint-staged": "lint-staged"
   },
   "dependencies": {
     "axios": "^0.19.2",
@@ -19,16 +21,21 @@
     "@babel/core": "^7.10.5",
     "@babel/preset-react": "^7.10.4",
     "babel-loader": "^8.1.0",
+    "babel-preset-react": "^6.24.1",
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^6.0.3",
     "css-loader": "^3.6.0",
+    "eslint": "^7.7.0",
+    "eslint-plugin-react": "^7.20.6",
     "file-loader": "^4.3.0",
     "fs-extra": "^8.1.0",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
+    "lint-staged": "^10.5.2",
     "mini-css-extract-plugin": "^0.9.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "postcss-loader": "^3.0.0",
+    "prettier": "2.2.0",
     "progress-bar-webpack-plugin": "^2.1.0",
     "react-hot-loader": "4.12.18",
     "sass-loader": "^8.0.2",
@@ -39,5 +46,15 @@
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0",
     "write-file-webpack-plugin": "^4.5.1"
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "npm run format"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint-staged"
+    }
   }
 }

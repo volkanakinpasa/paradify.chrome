@@ -1,12 +1,11 @@
-import { hot } from 'react-hot-loader/root';
 import React, { useEffect, useState } from 'react';
 // eslint-disable-next-line no-undef
 const axios = require('axios').create();
 import { Service } from 'axios-middleware';
 import playUrl from '../../img/play_m.png';
 import pauseUrl from '../../img/pause_m.png';
-// import goodUrl from '../../img/good.png';
-// import badUrl from '../../img/bad.png';
+import goodUrl from '../../img/good.png';
+import badUrl from '../../img/bad.png';
 import spotifyLogoGreen from '../../img/Spotify_Logo_RGB_Green_icon.png';
 import imageSearchNotFound from '../../img/giphy/search-not-found.gif';
 import imageLetsStart from '../../img/giphy/lets-get-started.gif';
@@ -24,11 +23,10 @@ import {
   getRefreshUrl,
   supportedWebsite,
 } from '../utils/constants';
-
 // eslint-disable-next-line no-undef
 const extensionId = chrome.runtime.id;
 
-function Index() {
+function PopupParadify() {
   const [token, setToken] = useState(null);
   const [loginNeeded, setLoginNeeded] = useState(false);
   const [trackInfoBeforeSearch, setTrackInfoBeforeSearch] = useState(null);
@@ -42,7 +40,7 @@ function Index() {
   const [currentPlayingIndex, setCurrentPlayingIndex] = useState(null);
   const [currentAudio, setCurrentAudio] = useState(null);
   const [query, setQuery] = useState(null);
-  // const [showSurvey, setShowSurvey] = useState(false);
+  const [showSurvey, setShowSurvey] = useState(false);
   const refPlaylist = React.useRef();
   const refSearchInput = React.useRef();
 
@@ -170,6 +168,7 @@ function Index() {
         !data.token.access_token ||
         !data.token.refresh_token
       ) {
+        // const url = getRedirectAuthUrl();
         setLoginNeeded(true);
       } else {
         setToken(data.token);
@@ -180,9 +179,9 @@ function Index() {
     // eslint-disable-next-line no-undef
     chrome.storage.sync.get(['survey_g_b_done'], (data) => {
       if (data.survey_g_b_done) {
-        // setShowSurvey(false);
+        setShowSurvey(false);
       } else {
-        // setShowSurvey(true);
+        setShowSurvey(true);
       }
     });
 
@@ -548,49 +547,51 @@ function Index() {
       </>
     );
   };
-  // const renderSurvey = () => {
-  //   return (
-  //     <>
-  //       {showSurvey && (
-  //         <div className="flex items-center mt-2">
-  //           Did you like new Paradify?
-  //           <div className="ml-1">
-  //             <button
-  //               onClick={() => {
-  //                 ReactGA.event({
-  //                   category: 'Survey',
-  //                   action: 'Did you like new design',
-  //                   label: 'No',
-  //                 });
-  //                 showInfo('Thank you!');
-  //                 setShowSurvey(false); //
-  //                 chrome.storage.sync.set({ survey_g_b_done: true }, () => {});
-  //               }}
-  //             >
-  //               <img src={badUrl} width="30" />
-  //             </button>
-  //           </div>
-  //           <div className="ml-2">
-  //             <button
-  //               onClick={() => {
-  //                 ReactGA.event({
-  //                   category: 'Survey',
-  //                   action: 'Did you like new design',
-  //                   label: 'Yes',
-  //                 });
-  //                 showInfo('Thank you!');
-  //                 setShowSurvey(false);
-  //                 chrome.storage.sync.set({ survey_g_b_done: true }, () => {});
-  //               }}
-  //             >
-  //               <img src={goodUrl} width="30" />
-  //             </button>
-  //           </div>
-  //         </div>
-  //       )}
-  //     </>
-  //   );
-  // };
+  const renderSurvey = () => {
+    return (
+      <>
+        {showSurvey && (
+          <div className="flex items-center mt-2">
+            Did you like new Paradify?
+            <div className="ml-1">
+              <button
+                onClick={() => {
+                  ReactGA.event({
+                    category: 'Survey',
+                    action: 'Did you like new design',
+                    label: 'No',
+                  });
+                  showInfo('Thank you!');
+                  setShowSurvey(false); //
+                  // eslint-disable-next-line no-undef
+                  chrome.storage.sync.set({ survey_g_b_done: true }, () => {});
+                }}
+              >
+                <img src={badUrl} width="30" />
+              </button>
+            </div>
+            <div className="ml-2">
+              <button
+                onClick={() => {
+                  ReactGA.event({
+                    category: 'Survey',
+                    action: 'Did you like new design',
+                    label: 'Yes',
+                  });
+                  showInfo('Thank you!');
+                  setShowSurvey(false);
+                  // eslint-disable-next-line no-undef
+                  chrome.storage.sync.set({ survey_g_b_done: true }, () => {});
+                }}
+              >
+                <img src={goodUrl} width="30" />
+              </button>
+            </div>
+          </div>
+        )}
+      </>
+    );
+  };
 
   const renderList = () => {
     return (
@@ -839,6 +840,8 @@ function Index() {
                 searchResult.tracks.total > 0
                   ? renderList()
                   : renderNoTrackFound()}
+
+                {renderSurvey()}
                 {renderSearchForm()}
               </>
             ) : (
@@ -892,4 +895,4 @@ function Index() {
   );
 }
 
-export default hot(Index);
+export default PopupParadify;

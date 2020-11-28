@@ -2,6 +2,7 @@ import path from 'path';
 
 const URLS = {
   BASE_URL:
+    // eslint-disable-next-line no-undef
     process.env.NODE_ENV === 'production'
       ? 'http://www.paradify.com'
       : 'https://localhost:5001',
