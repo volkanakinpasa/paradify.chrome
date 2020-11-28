@@ -6,7 +6,7 @@ function PopupChoice() {
     // start();
   }, []);
 
-  const addClickChoice = (choiceName) => {};
+  // const addClickChoice = (choiceName) => {};
 
   const renderHeader = () => {
     return (
@@ -16,21 +16,21 @@ function PopupChoice() {
           <h3>Do you prefer to use paradify? or </h3>
           <div>
             <button
-              className='gree-add-button text-white font-semibold 
+              className="gree-add-button text-white font-semibold 
                             rounded-full w-16 h-6 focus:outline-none focus:shadow-outline
-                            transition duration-500 ease-in-out transform hover:-translate-1 hover:scale-110'
+                            transition duration-500 ease-in-out transform hover:-translate-1 hover:scale-110"
               onClick={() => {
-                onClickChoice('paradify-popup');
+                // onClickChoice('paradify-popup');
               }}
             >
               Add
             </button>
             <button
-              className='gree-add-button text-white font-semibold 
+              className="gree-add-button text-white font-semibold 
                             rounded-full w-16 h-6 focus:outline-none focus:shadow-outline
-                            transition duration-500 ease-in-out transform hover:-translate-1 hover:scale-110'
+                            transition duration-500 ease-in-out transform hover:-translate-1 hover:scale-110"
               onClick={() => {
-                onClickChoice('direct-open');
+                // onClickChoice('direct-open');
               }}
             >
               Add

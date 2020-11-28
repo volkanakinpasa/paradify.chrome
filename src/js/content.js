@@ -4,6 +4,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import { paradify } from './utils';
 
+// eslint-disable-next-line no-undef
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   if (message != undefined) {
     if (message.type == 'getTrackInfo') {
@@ -11,7 +12,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
       sendResponse(trackInfo);
     } else if (message.type == 'contextMenuClicked') {
       var returnUrl = paradify.contextMenuClicked(
-        message.details.selectionText
+        message.details.selectionText,
       );
       sendResponse(returnUrl);
     }
@@ -29,11 +30,11 @@ const injectParadifyAddContainer = () => {
     window.document.getElementById('paradify-spotify-add-container'),
     function () {
       var spotifyButton = window.document.getElementById(
-        'paradify-spotify-add-container'
+        'paradify-spotify-add-container',
       ).firstChild;
       try {
         const menuContainer = window.document.querySelector(
-          '.ytp-chrome-controls .ytp-right-controls'
+          '.ytp-chrome-controls .ytp-right-controls',
         );
         menuContainer.insertBefore(spotifyButton, menuContainer.firstChild);
       } catch (err) {
@@ -41,7 +42,7 @@ const injectParadifyAddContainer = () => {
         paradifySpotifyAddContainer.style.cssText =
           'opacity: 1; right: 10px !important; position: fixed !important; bottom: 50px !important; margin: 5px; background-color: transparent; display: ;';
       }
-    }
+    },
   );
 };
 

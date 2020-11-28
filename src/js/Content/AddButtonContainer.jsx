@@ -16,6 +16,7 @@ function AddButtonContainer() {
           var trackInfo = paradify.getTrackInfo(location.href);
           const query = getSearchTextFromTrackInfo(trackInfo.track);
           window.open(getSpotifySearchUrl(query), '_blank');
+          // eslint-disable-next-line no-undef
           chrome.runtime.sendMessage(
             {
               type: 'addIconClicked',
@@ -28,14 +29,15 @@ function AddButtonContainer() {
             },
             function (response) {
               console.log(response.farewell);
-            }
+            },
           );
         }}
       >
         <img
+          // eslint-disable-next-line no-undef
           src={chrome.runtime.getURL(spotifyLogoGreen)}
-          width='30'
-          title='Add to Spotify'
+          width="30"
+          title="Add to Spotify"
         />
       </button>
     </>

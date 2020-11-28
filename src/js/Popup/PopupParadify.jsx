@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+// eslint-disable-next-line no-undef
 const axios = require('axios').create();
 import { Service } from 'axios-middleware';
 import playUrl from '../../img/play_m.png';
@@ -22,7 +23,7 @@ import {
   getRefreshUrl,
   supportedWebsite,
 } from '../utils/constants';
-
+// eslint-disable-next-line no-undef
 const extensionId = chrome.runtime.id;
 
 function PopupParadify() {
@@ -33,8 +34,8 @@ function PopupParadify() {
   const [searchResult, setSearchResult] = useState(null);
   const [searchReady, setSearchReady] = useState(null);
   const [me, setMe] = useState(null);
-  const [pageRead, setPageReady] = useState(true);
-  const [playlistSelectedValue, setPlaylistSelectedValue] = useState(true);
+  // const [pageRead, setPageReady] = useState(true);
+  // const [playlistSelectedValue, setPlaylistSelectedValue] = useState(true);
   const [notification, setNotification] = useState(null);
   const [currentPlayingIndex, setCurrentPlayingIndex] = useState(null);
   const [currentAudio, setCurrentAudio] = useState(null);
@@ -44,9 +45,10 @@ function PopupParadify() {
   const refSearchInput = React.useRef();
 
   const readTrackInfoFromThepage = () => {
+    // eslint-disable-next-line no-undef
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       var url = tabs[0].url.toLowerCase();
-
+      // eslint-disable-next-line no-undef
       chrome.tabs.sendMessage(
         tabs[0].id,
         { type: 'getTrackInfo', url },
@@ -60,7 +62,7 @@ function PopupParadify() {
               label: `${decodeURIComponent(uri.hostname)}`,
             });
           } else {
-            setPageReady();
+            // setPageReady();
 
             try {
               const uri = new URL(url);
@@ -69,9 +71,10 @@ function PopupParadify() {
                 action: 'Track Info Load - Not Found',
                 label: `${decodeURIComponent(uri.hostname)}`,
               });
+              // eslint-disable-next-line no-empty
             } catch {}
           }
-        }
+        },
       );
     });
   };
@@ -105,6 +108,7 @@ function PopupParadify() {
               category: 'Token',
               action: 'Token Refresh',
             });
+            // eslint-disable-next-line no-empty
           } catch {}
           return axios
             .get(getRefreshUrl(), {
@@ -124,6 +128,7 @@ function PopupParadify() {
                 setToken(tempToken);
                 response.config.headers['access_token'] =
                   tempToken.access_token;
+                // eslint-disable-next-line no-undef
                 chrome.storage.sync.set({ token: tempToken }, () => {});
                 return axios.request(response.config);
               } else {
@@ -132,6 +137,7 @@ function PopupParadify() {
                     category: 'Token',
                     action: 'Token Refresh Not Found Access Token',
                   });
+                  // eslint-disable-next-line no-empty
                 } catch {}
                 return Promise.reject();
               }
@@ -142,6 +148,7 @@ function PopupParadify() {
                   category: 'Error',
                   action: 'Token Refresh Error',
                 });
+                // eslint-disable-next-line no-empty
               } catch {}
               return Promise.reject(error);
             });
@@ -151,15 +158,17 @@ function PopupParadify() {
   };
 
   const start = () => {
+    // eslint-disable-next-line no-undef
     chrome.runtime.sendMessage(extensionId, { type: 'clearBadge' });
 
+    // eslint-disable-next-line no-undef
     chrome.storage.sync.get(['token'], (data) => {
       if (
         !data.token ||
         !data.token.access_token ||
         !data.token.refresh_token
       ) {
-        const url = getRedirectAuthUrl();
+        // const url = getRedirectAuthUrl();
         setLoginNeeded(true);
       } else {
         setToken(data.token);
@@ -167,6 +176,7 @@ function PopupParadify() {
       }
     });
 
+    // eslint-disable-next-line no-undef
     chrome.storage.sync.get(['survey_g_b_done'], (data) => {
       if (data.survey_g_b_done) {
         setShowSurvey(false);
@@ -192,14 +202,12 @@ function PopupParadify() {
     axios
       .get(getSearchUrl() + '?q=' + q)
       .then((response) => {
-        var i = 0;
         const { data } = response;
         let d = null;
         if (typeof data === 'string') d = JSON.parse(data);
         else d = data;
 
-        if (d.error) {
-        } else {
+        if (!d.error) {
           setSearchResult(d);
           setSearchReady(true);
           if (!d || !d.tracks || d.tracks.total === 0) {
@@ -211,7 +219,7 @@ function PopupParadify() {
           }
         }
       })
-      .catch((error) => {
+      .catch(() => {
         ReactGA.event({
           category: 'Error',
           action: 'Search Error',
@@ -219,7 +227,7 @@ function PopupParadify() {
         });
       })
       .finally(() => {
-        setPageReady(true);
+        // setPageReady(true);
       });
   };
 
@@ -244,7 +252,7 @@ function PopupParadify() {
 
   useEffect(() => {
     if (!playlist || playlist.items.length === 0) return;
-    setPlaylistSelectedValue(playlist.items[0].id);
+    // setPlaylistSelectedValue(playlist.items[0].id);
   }, [playlist]);
 
   const loadPlaylist = (me) => {
@@ -260,7 +268,7 @@ function PopupParadify() {
         data.items = data.items.filter((item) => item.owner.id === me.id);
         setPlaylist(data);
       })
-      .catch((error) => {
+      .catch(() => {
         ReactGA.event({
           category: 'Error',
           action: 'Playlist Get Error',
@@ -295,7 +303,7 @@ function PopupParadify() {
         if (!meResponse.data || !meResponse.data.id) return;
         setMe(meResponse.data);
       })
-      .catch((error) => {
+      .catch(() => {
         ReactGA.event({
           category: 'Error',
           action: 'Me Get Error',
@@ -333,6 +341,7 @@ function PopupParadify() {
           action: 'Add To Playlist Click',
           label: decodeURIComponent(trackName),
         });
+        // eslint-disable-next-line no-empty
       } catch {}
 
       if (
@@ -371,7 +380,7 @@ function PopupParadify() {
               showInfo('Saved');
             }
           })
-          .catch(function (error) {
+          .catch(function () {
             showError('Something went wrong!');
             ReactGA.event({
               category: 'Error',
@@ -424,6 +433,7 @@ function PopupParadify() {
   };
 
   const logout = () => {
+    // eslint-disable-next-line no-undef
     chrome.storage.sync.set({ token: null }, () => {
       setToken(null);
       setMe(null);
@@ -442,7 +452,7 @@ function PopupParadify() {
           {me && me.images && me.images.length > 0 && (
             <img
               src={me.images[0].url}
-              className='w-full h-full rounded-full'
+              className="w-full h-full rounded-full"
             />
           )}
         </div>
@@ -462,14 +472,14 @@ function PopupParadify() {
 
     return (
       <>
-        <div className='mb-2 text-right'>
+        <div className="mb-2 text-right">
           {/* <div className='mb-1'>Your playlist</div> */}
-          <div className='inline-block relative'>
+          <div className="inline-block relative">
             <select
-              className='block appearance-none w-full bg-white border border-gray-400 
+              className="block appearance-none w-full bg-white border border-gray-400 
               hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight 
-              focus:outline-none focus:shadow-outline text-black'
-              id='grid-state'
+              focus:outline-none focus:shadow-outline text-black"
+              id="grid-state"
               //onChange={handlePlaylistChange}
               ref={refPlaylist}
             >
@@ -486,13 +496,13 @@ function PopupParadify() {
                 );
               })}
             </select>
-            <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700'>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
               <svg
-                className='fill-current h-4 w-4'
-                xmlns='http://www.w3.org/2000/svg'
-                viewBox='0 0 20 20'
+                className="fill-current h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
               >
-                <path d='M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z' />
+                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
               </svg>
             </div>
           </div>
@@ -504,9 +514,9 @@ function PopupParadify() {
   const renderNoTrackFound = () => {
     return (
       <>
-        <div className='min-w-full mb-2 text-center'>
+        <div className="min-w-full mb-2 text-center">
           No track found. You may filter your search.
-          <img src={imageSearchNotFound} alt='' className='w-full' />
+          <img src={imageSearchNotFound} alt="" className="w-full" />
         </div>
       </>
     );
@@ -514,7 +524,7 @@ function PopupParadify() {
   const renderSearchForm = () => {
     return (
       <>
-        <div className='mt-4'>
+        <div className="mt-4">
           <form
             onSubmit={(e) => {
               if (refSearchInput.current) {
@@ -527,10 +537,10 @@ function PopupParadify() {
           >
             <input
               ref={refSearchInput}
-              type='text'
+              type="text"
               defaultValue={query}
-              className='text-gray-700 appearance-none rounded-r rounded-l border border-gray-700 border-b block pl-4 pr-4 py-2 w-full  text-sm focus:placeholder-gray-600 focus:outline-none'
-              placeholder='Or search a song here'
+              className="text-gray-700 appearance-none rounded-r rounded-l border border-gray-700 border-b block pl-4 pr-4 py-2 w-full  text-sm focus:placeholder-gray-600 focus:outline-none"
+              placeholder="Or search a song here"
             />
           </form>
         </div>
@@ -541,9 +551,9 @@ function PopupParadify() {
     return (
       <>
         {showSurvey && (
-          <div className='flex items-center mt-2'>
+          <div className="flex items-center mt-2">
             Did you like new Paradify?
-            <div className='ml-1'>
+            <div className="ml-1">
               <button
                 onClick={() => {
                   ReactGA.event({
@@ -553,13 +563,14 @@ function PopupParadify() {
                   });
                   showInfo('Thank you!');
                   setShowSurvey(false); //
+                  // eslint-disable-next-line no-undef
                   chrome.storage.sync.set({ survey_g_b_done: true }, () => {});
                 }}
               >
-                <img src={badUrl} width='30' />
+                <img src={badUrl} width="30" />
               </button>
             </div>
-            <div className='ml-2'>
+            <div className="ml-2">
               <button
                 onClick={() => {
                   ReactGA.event({
@@ -569,10 +580,11 @@ function PopupParadify() {
                   });
                   showInfo('Thank you!');
                   setShowSurvey(false);
+                  // eslint-disable-next-line no-undef
                   chrome.storage.sync.set({ survey_g_b_done: true }, () => {});
                 }}
               >
-                <img src={goodUrl} width='30' />
+                <img src={goodUrl} width="30" />
               </button>
             </div>
           </div>
@@ -586,17 +598,17 @@ function PopupParadify() {
       <>
         {searchResult.tracks.total > 0 && (
           <>
-            <div className='min-w-full'>
-              <div className='w-full border-t border-gray-700 border-opacity-50'>
+            <div className="min-w-full">
+              <div className="w-full border-t border-gray-700 border-opacity-50">
                 {searchResult.tracks.total > 0 &&
                   searchResult.tracks.items.map((item, i) => {
                     return (
-                      <div key={i} className='flex w-full'>
-                        <div className='pl-2 py-2 border-b border-gray-700 border-opacity-50 flex items-center'>
+                      <div key={i} className="flex w-full">
+                        <div className="pl-2 py-2 border-b border-gray-700 border-opacity-50 flex items-center">
                           <button
-                            className='gree-add-button text-white font-semibold 
+                            className="gree-add-button text-white font-semibold 
                             rounded-full w-16 h-6 focus:outline-none focus:shadow-outline
-                            transition duration-500 ease-in-out transform hover:-translate-1 hover:scale-110'
+                            transition duration-500 ease-in-out transform hover:-translate-1 hover:scale-110"
                             onClick={() => {
                               onClickAddTrackToPlaylist(item.id, item.name);
                             }}
@@ -604,35 +616,35 @@ function PopupParadify() {
                             Add
                           </button>
                         </div>
-                        <div className='pl-2 py-2 border-b border-gray-700 border-opacity-50 flex-grow flex'>
-                          <div className='flex-grow'>
-                            <div className='flex items-center'>
-                              <div className='flex-shrink-0 w-10'>
+                        <div className="pl-2 py-2 border-b border-gray-700 border-opacity-50 flex-grow flex">
+                          <div className="flex-grow">
+                            <div className="flex items-center">
+                              <div className="flex-shrink-0 w-10">
                                 {item.preview_url ? (
                                   currentPlayingIndex === i ? (
                                     <>
                                       <img
                                         src={pauseUrl}
-                                        className='w-full h-full rounded-full'
+                                        className="w-full h-full rounded-full"
                                         alt={item.name}
                                         title={item.name}
                                         onClick={() => pause(item.name)}
-                                        height='40'
-                                        width='40'
+                                        height="40"
+                                        width="40"
                                       />
                                     </>
                                   ) : (
                                     <>
                                       <img
                                         src={playUrl}
-                                        className='w-full h-full rounded-full'
+                                        className="w-full h-full rounded-full"
                                         alt={item.name}
                                         title={item.name}
                                         onClick={() =>
                                           play(item.preview_url, i, item.name)
                                         }
-                                        height='40'
-                                        width='40'
+                                        height="40"
+                                        width="40"
                                       />
                                     </>
                                   )
@@ -640,20 +652,20 @@ function PopupParadify() {
                                   ''
                                 )}
                               </div>
-                              <div className='ml-2 flex-shrink-0 w-10'>
+                              <div className="ml-2 flex-shrink-0 w-10">
                                 <img
-                                  className='w-full h-full rounded-full'
+                                  className="w-full h-full rounded-full"
                                   src={item.album.images[0].url}
                                   alt={item.name}
                                   title={item.name}
                                 />
                               </div>
 
-                              <div className='ml-3'>
-                                <p className='whitespace-no-wrap font-semibold  font-bold max-w-15 overflow-hidden'>
+                              <div className="ml-3">
+                                <p className="whitespace-no-wrap font-semibold  font-bold max-w-15 overflow-hidden">
                                   {item.name}
                                 </p>
-                                <p className='whitespace-no-wrap font-normal text-xs max-w-15 overflow-hidden'>
+                                <p className="whitespace-no-wrap font-normal text-xs max-w-15 overflow-hidden">
                                   {item.artists[0].name}
                                 </p>
                               </div>
@@ -666,7 +678,7 @@ function PopupParadify() {
               </div>
             </div>
 
-            <div className='text-xs px-2 pt-2 text-center'>
+            <div className="text-xs px-2 pt-2 text-center">
               Showing {searchResult.tracks.items.length} to{' '}
               {searchResult.tracks.total}
             </div>
@@ -679,11 +691,11 @@ function PopupParadify() {
   const renderInitial = () => {
     return (
       <div>
-        <div className='text-md text-orange-400 mt-4'>
+        <div className="text-md text-orange-400 mt-4">
           <div>
             Open{' '}
             <button
-              className='font-semibold underline'
+              className="font-semibold underline"
               onClick={() => {
                 ReactGA.event({
                   category: 'Off Site',
@@ -691,6 +703,7 @@ function PopupParadify() {
                   label: decodeURIComponent(supportedWebsite.name),
                 });
                 setTimeout(() => {
+                  // eslint-disable-next-line no-undef
                   chrome.tabs.create({ url: supportedWebsite.href });
                 }, 300);
               }}
@@ -699,8 +712,8 @@ function PopupParadify() {
             </button>
             , watch a song, click Paradify...
           </div>
-          <div className='mt-4'>
-            <img src={imageLetsStart} alt='' className='w-full' />
+          <div className="mt-4">
+            <img src={imageLetsStart} alt="" className="w-full" />
           </div>
         </div>
         {renderSearchForm()}
@@ -723,6 +736,7 @@ function PopupParadify() {
               var h = 600;
               var left = screen.width / 2 - w / 2;
               var top = screen.height / 2 - h / 2;
+              // eslint-disable-next-line no-undef
               chrome.windows.create(
                 {
                   url,
@@ -732,7 +746,7 @@ function PopupParadify() {
                   left: left,
                   top: top,
                 },
-                (window) => {}
+                () => {},
               );
             }, 300);
           }}
@@ -751,15 +765,15 @@ function PopupParadify() {
       case 'info':
         return (
           <div
-            className='flex items-center bg-blue-500 text-white text-sm font-bold px-4 py-1 mb-2'
-            role='alert'
+            className="flex items-center bg-blue-500 text-white text-sm font-bold px-4 py-1 mb-2"
+            role="alert"
           >
             <svg
-              className='fill-current w-4 h-4 mr-2'
-              xmlns='http://www.w3.org/2000/svg'
-              viewBox='0 0 20 20'
+              className="fill-current w-4 h-4 mr-2"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
             >
-              <path d='M12.432 0c1.34 0 2.01.912 2.01 1.957 0 1.305-1.164 2.512-2.679 2.512-1.269 0-2.009-.75-1.974-1.99C9.789 1.436 10.67 0 12.432 0zM8.309 20c-1.058 0-1.833-.652-1.093-3.524l1.214-5.092c.211-.814.246-1.141 0-1.141-.317 0-1.689.562-2.502 1.117l-.528-.88c2.572-2.186 5.531-3.467 6.801-3.467 1.057 0 1.233 1.273.705 3.23l-1.391 5.352c-.246.945-.141 1.271.106 1.271.317 0 1.357-.392 2.379-1.207l.6.814C12.098 19.02 9.365 20 8.309 20z' />
+              <path d="M12.432 0c1.34 0 2.01.912 2.01 1.957 0 1.305-1.164 2.512-2.679 2.512-1.269 0-2.009-.75-1.974-1.99C9.789 1.436 10.67 0 12.432 0zM8.309 20c-1.058 0-1.833-.652-1.093-3.524l1.214-5.092c.211-.814.246-1.141 0-1.141-.317 0-1.689.562-2.502 1.117l-.528-.88c2.572-2.186 5.531-3.467 6.801-3.467 1.057 0 1.233 1.273.705 3.23l-1.391 5.352c-.246.945-.141 1.271.106 1.271.317 0 1.357-.392 2.379-1.207l.6.814C12.098 19.02 9.365 20 8.309 20z" />
             </svg>
             <p>{notification.message}</p>
           </div>
@@ -767,15 +781,15 @@ function PopupParadify() {
       case 'error':
         return (
           <div
-            className='flex items-center bg-red-500 text-white text-sm font-bold px-4 py-1 mb-2'
-            role='alert'
+            className="flex items-center bg-red-500 text-white text-sm font-bold px-4 py-1 mb-2"
+            role="alert"
           >
             <svg
-              className='fill-current w-4 h-4 mr-2'
-              xmlns='http://www.w3.org/2000/svg'
-              viewBox='0 0 20 20'
+              className="fill-current w-4 h-4 mr-2"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
             >
-              <path d='M12.432 0c1.34 0 2.01.912 2.01 1.957 0 1.305-1.164 2.512-2.679 2.512-1.269 0-2.009-.75-1.974-1.99C9.789 1.436 10.67 0 12.432 0zM8.309 20c-1.058 0-1.833-.652-1.093-3.524l1.214-5.092c.211-.814.246-1.141 0-1.141-.317 0-1.689.562-2.502 1.117l-.528-.88c2.572-2.186 5.531-3.467 6.801-3.467 1.057 0 1.233 1.273.705 3.23l-1.391 5.352c-.246.945-.141 1.271.106 1.271.317 0 1.357-.392 2.379-1.207l.6.814C12.098 19.02 9.365 20 8.309 20z' />
+              <path d="M12.432 0c1.34 0 2.01.912 2.01 1.957 0 1.305-1.164 2.512-2.679 2.512-1.269 0-2.009-.75-1.974-1.99C9.789 1.436 10.67 0 12.432 0zM8.309 20c-1.058 0-1.833-.652-1.093-3.524l1.214-5.092c.211-.814.246-1.141 0-1.141-.317 0-1.689.562-2.502 1.117l-.528-.88c2.572-2.186 5.531-3.467 6.801-3.467 1.057 0 1.233 1.273.705 3.23l-1.391 5.352c-.246.945-.141 1.271.106 1.271.317 0 1.357-.392 2.379-1.207l.6.814C12.098 19.02 9.365 20 8.309 20z" />
             </svg>
             <p>{notification.message}</p>
           </div>
@@ -786,25 +800,25 @@ function PopupParadify() {
   const render = () => {
     return (
       <>
-        <div className='flex justify-between items-center'>
-          <div className='flex items-baseline'>
-            <h2 className='text-2xl font-semibold leading-tight'>Paradify</h2>
-            <div className='ml-1 flex items-center'>
+        <div className="flex justify-between items-center">
+          <div className="flex items-baseline">
+            <h2 className="text-2xl font-semibold leading-tight">Paradify</h2>
+            <div className="ml-1 flex items-center">
               integrated with{' '}
               <img
                 src={spotifyLogoGreen}
-                width='70'
-                height='21'
-                className='ml-1'
+                width="70"
+                height="21"
+                className="ml-1"
               />
             </div>
           </div>
-          <div className='flex-shrink-0 w-10'>{renderMe()}</div>
+          <div className="flex-shrink-0 w-10">{renderMe()}</div>
         </div>
         {!loginNeeded && query && (
           <>
-            <div className='my-2 text-white font-semibold'>
-              <h4 className='text-lg'>{query}</h4>
+            <div className="my-2 text-white font-semibold">
+              <h4 className="text-lg">{query}</h4>
             </div>
           </>
         )}
@@ -818,7 +832,7 @@ function PopupParadify() {
               searchResult.tracks.total > 0 &&
               renderPlaylist()}
           </div>
-          <div className='inline-block min-w-full shadow overflow-hidden'>
+          <div className="inline-block min-w-full shadow overflow-hidden">
             {!loginNeeded && searchReady ? (
               <>
                 {searchResult &&
@@ -835,10 +849,10 @@ function PopupParadify() {
             )}
             {loginNeeded ? (
               <>
-                <div className='text-sm text-orange-400 my-4'>
-                  <p>Please click 'Login' to start using Paradify.</p>
-                  <p className='mt-4'>
-                    <img src={imageSignin} alt='' />
+                <div className="text-sm text-orange-400 my-4">
+                  <p>Please click &apos;Login&apos; to start using Paradify.</p>
+                  <p className="mt-4">
+                    <img src={imageSignin} alt="" />
                   </p>
                 </div>
               </>
@@ -849,7 +863,7 @@ function PopupParadify() {
                 )}
               </>
             )}
-            <div className='text-right'>
+            <div className="text-right">
               <button
                 onClick={() => {
                   ReactGA.event({
@@ -858,6 +872,7 @@ function PopupParadify() {
                   });
                   const url = 'https://forms.gle/LPnQpiLchg2oHb6MA';
                   setTimeout(() => {
+                    // eslint-disable-next-line no-undef
                     chrome.tabs.create({ url });
                   }, 300);
                 }}
@@ -873,8 +888,8 @@ function PopupParadify() {
 
   return (
     <>
-      <div className='antialiased font-mono text-gray-300'>
-        <div className='mx-auto px-4 py-2'>{render()}</div>
+      <div className="antialiased font-mono text-gray-300">
+        <div className="mx-auto px-4 py-2">{render()}</div>
       </div>
     </>
   );

@@ -10,16 +10,16 @@ function Header() {
   const renderHeader = () => {
     return (
       <>
-        <div className='flex justify-between items-center'>
-          <div className='flex items-baseline'>
-            <h2 className='text-2xl font-semibold leading-tight'>Paradify</h2>
-            <div className='ml-1 flex items-center'>
+        <div className="flex justify-between items-center">
+          <div className="flex items-baseline">
+            <h2 className="text-2xl font-semibold leading-tight">Paradify</h2>
+            <div className="ml-1 flex items-center">
               search for songs in{' '}
               <img
                 src={spotifyLogoGreen}
-                width='70'
-                height='21'
-                className='ml-1'
+                width="70"
+                height="21"
+                className="ml-1"
               />
             </div>
           </div>
