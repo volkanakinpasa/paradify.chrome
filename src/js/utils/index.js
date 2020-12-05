@@ -12,6 +12,7 @@ const getSearchTextFromTrackInfo = (trackInfo) => {
 
 const initializeReactGA = (ReactGA, pageName) => {
   ReactGA.initialize('UA-3218083-16');
+  ReactGA.set({ anonymizeIp: true });
   ReactGA.set({ checkProtocolTask: () => {} });
   ReactGA.pageview('/' + pageName);
 
@@ -319,14 +320,17 @@ const contentSpotifyAddButtonStyle = {
   backgroundColor: 'transparent',
   cursor: 'pointer',
 };
+const contentContainernStyle = {
+  padding: '20%',
+};
 
 const imageSpotifyAddButtonStyle = {
-  height: '60%',
+  height: '100%',
   top: '0px',
   bottom: '0px',
   display: 'block',
   margin: 'auto',
-  width: '60%',
+  width: '100%',
 };
 
 export {
@@ -336,4 +340,5 @@ export {
   getSpotifySearchUrl,
   contentSpotifyAddButtonStyle,
   imageSpotifyAddButtonStyle,
+  contentContainernStyle,
 };

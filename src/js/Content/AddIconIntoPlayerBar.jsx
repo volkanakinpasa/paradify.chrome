@@ -6,6 +6,7 @@ import {
   getSpotifySearchUrl,
   contentSpotifyAddButtonStyle,
   imageSpotifyAddButtonStyle,
+  contentContainernStyle,
 } from '../utils';
 
 function AddIconIntoPlayerBar() {
@@ -38,14 +39,16 @@ function AddIconIntoPlayerBar() {
         className="playerButton ytp-button"
         title="Add to Spotify"
       >
-        <img
-          // eslint-disable-next-line no-undef
-          src={chrome.runtime.getURL(spotifyLogoGreen)}
-          width="24"
-          height="24"
-          title="Add to Spotify"
-          style={imageSpotifyAddButtonStyle}
-        />
+        <div style={contentContainernStyle}>
+          <img
+            // eslint-disable-next-line no-undef
+            src={chrome.runtime.getURL(spotifyLogoGreen)}
+            width="24"
+            height="24"
+            title="Add to Spotify"
+            style={imageSpotifyAddButtonStyle}
+          />
+        </div>
       </button>
     </>
   );
