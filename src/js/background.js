@@ -31,6 +31,8 @@ const addIconClicked = (data) => {
   ga('create', 'UA-3218083-16', 'auto');
   // see: http://stackoverflow.com/a/22152353/1958200
   // eslint-disable-next-line no-undef
+  ga('set', 'anonymizeIp', true);
+  // eslint-disable-next-line no-undef
   ga('set', 'checkProtocolTask', function () {});
   // eslint-disable-next-line no-undef
   ga('send', {
