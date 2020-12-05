@@ -98,11 +98,11 @@ chrome.runtime.onMessageExternal.addListener(function (message, sender) {
 //     });
 //   }
 // });
-// eslint-disable-next-line no-undef
-chrome.runtime.setUninstallURL(
-  'http://www.paradify.com/home/UnInstalled',
-  () => {},
-);
+// // eslint-disable-next-line no-undef
+// chrome.runtime.setUninstallURL(
+//   'http://www.paradify.com/home/UnInstalled',
+//   () => {},
+// );
 
 var div = document.createElement('div');
 div.cssText =
