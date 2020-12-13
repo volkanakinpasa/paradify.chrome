@@ -2,8 +2,8 @@
   "manifest_version": 2,
   "name": "Paradify - Youtube to Spotify",
   "short_name": "Paradify",
-  "description": "Add a track from Youtube to Spotify playlist",
-  "version": "6.4.0",
+  "description": "The easiest way to get a song from YouTube to Spotify by one-click",
+  "version": "6.5.0",
   "permissions": ["activeTab", "storage"],
   "content_scripts": [
     {

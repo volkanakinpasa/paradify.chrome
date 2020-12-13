@@ -89,20 +89,12 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 chrome.runtime.onMessageExternal.addListener(function (message, sender) {
   messageListener(message, sender, () => {});
 });
-// // eslint-disable-next-line no-undef
-// chrome.runtime.onInstalled.addListener(function (details) {
-//   if (details.reason == 'install') {
-//     // eslint-disable-next-line no-undef
-//     chrome.tabs.create({
-//       url: 'http://www.paradify.com/home/Installed',
-//     });
-//   }
-// });
-// // eslint-disable-next-line no-undef
-// chrome.runtime.setUninstallURL(
-//   'http://www.paradify.com/home/UnInstalled',
-//   () => {},
-// );
+
+// eslint-disable-next-line no-undef
+chrome.runtime.setUninstallURL(
+  'http://www.paradify.com/home/UnInstalled',
+  () => {},
+);
 
 var div = document.createElement('div');
 div.cssText =
