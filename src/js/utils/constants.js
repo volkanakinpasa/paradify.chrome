@@ -13,13 +13,10 @@ const URLS = {
   REFRESH_PATH: '/api/refresh-token',
 };
 
-const getRedirectAuthUrl = () => {
-  return path.join(URLS.BASE_URL, URLS.REDIRECT_AUTH_PATH);
-};
+const getRedirectAuthUrl = () =>
+  path.join(URLS.BASE_URL, URLS.REDIRECT_AUTH_PATH);
 
-const getSearchUrl = () => {
-  return path.join(URLS.BASE_URL, URLS.SEARCH_PATH);
-};
+const getSearchUrl = () => path.join(URLS.BASE_URL, URLS.SEARCH_PATH);
 
 const getMeUrl = () => {
   return path.join(URLS.BASE_URL, URLS.ME_PATH);

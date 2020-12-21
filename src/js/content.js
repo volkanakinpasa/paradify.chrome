@@ -1,3 +1,5 @@
+/* eslint-disable prefer-arrow-callback */
+/* eslint-disable react/jsx-filename-extension */
 // import ParadifySpotifyAddContainer from './Content/ParadifySpotifyAddContainer.jsx';
 import AddIconIntoPlayerBar from './Content/AddIconIntoPlayerBar.jsx';
 import React from 'react';
@@ -20,30 +22,54 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 });
 
 const injectParadifyAddContainer = () => {
+  const containerName = 'paradify-spotify-add-container';
   const paradifySpotifyAddContainer = window.document.createElement('div');
-  paradifySpotifyAddContainer.id = 'paradify-spotify-add-container';
+  paradifySpotifyAddContainer.id = containerName;
   paradifySpotifyAddContainer.style.cssText = 'display: none;';
 
   window.document.body.appendChild(paradifySpotifyAddContainer);
-  render(
-    <AddIconIntoPlayerBar />,
-    window.document.getElementById('paradify-spotify-add-container'),
-    function () {
-      var spotifyButton = window.document.getElementById(
-        'paradify-spotify-add-container',
-      ).firstChild;
-      try {
-        const menuContainer = window.document.querySelector(
-          '.ytp-chrome-controls .ytp-right-controls',
-        );
-        menuContainer.insertBefore(spotifyButton, menuContainer.firstChild);
-      } catch (err) {
-        console.log(err);
-        paradifySpotifyAddContainer.style.cssText =
-          'opacity: 1; right: 10px !important; position: fixed !important; bottom: 50px !important; margin: 5px; background-color: transparent; display: ;';
-      }
-    },
-  );
+  if (window.location.href.indexOf('music.youtube.com') > -1) {
+    render(
+      <AddIconIntoPlayerBar />,
+      window.document.getElementById(containerName),
+      // eslint-disable-next-line func-names
+      function () {
+        const spotifyButton = window.document.getElementById(containerName)
+          .firstChild;
+        try {
+          const menuContainer = window.document.querySelector(
+            'ytmusic-pivot-bar-renderer',
+          );
+          menuContainer.appendChild(spotifyButton, menuContainer.firstChild);
+        } catch (err) {
+          paradifySpotifyAddContainer.style.cssText =
+            'opacity: 1; right: 10px !important; position: fixed !important; bottom: 50px !important; margin: 5px; background-color: transparent; display: ;';
+        }
+      },
+    );
+  } else if (
+    window.location.href.indexOf('youtube.com') > -1 &&
+    window.location.href.indexOf('music.youtube.com') === 0
+  ) {
+    render(
+      <AddIconIntoPlayerBar />,
+      window.document.getElementById(containerName),
+      // eslint-disable-next-line func-names
+      function () {
+        const spotifyButton = window.document.getElementById(containerName)
+          .firstChild;
+        try {
+          const menuContainer = window.document.querySelector(
+            '.ytp-chrome-controls .ytp-right-controls',
+          );
+          menuContainer.insertBefore(spotifyButton, menuContainer.firstChild);
+        } catch (err) {
+          paradifySpotifyAddContainer.style.cssText =
+            'opacity: 1; right: 10px !important; position: fixed !important; bottom: 50px !important; margin: 5px; background-color: transparent; display: ;';
+        }
+      },
+    );
+  }
 };
 
 const loadInjection = () => {

@@ -18,6 +18,10 @@ function AddIconIntoPlayerBar() {
         onClick={() => {
           var trackInfo = paradify.getTrackInfo(location.href);
           const query = getSearchTextFromTrackInfo(trackInfo.track);
+          if (query.length === 0) {
+            alert('No played song/video clip found.');
+            return;
+          }
           window.open(getSpotifySearchUrl(query), '_blank');
           // eslint-disable-next-line no-undef
           chrome.runtime.sendMessage(

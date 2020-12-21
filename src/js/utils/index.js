@@ -7,7 +7,7 @@ const getSearchTextFromTrackInfo = (trackInfo) => {
       (trackInfo.artistName ? trackInfo.artistName : '');
   }
 
-  return q;
+  return q.trim();
 };
 
 const initializeReactGA = (ReactGA, pageName) => {
