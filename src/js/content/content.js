@@ -61,6 +61,9 @@ const onLoad = () => {
   paradify.pageLoad();
 
   setTimeout(() => {
+    //when the page is loade
+    loadInjection();
+    //when the title is changed
     contentUtil.youTubeTitle(() => {
       loadInjection();
     });
