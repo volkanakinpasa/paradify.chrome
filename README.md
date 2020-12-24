@@ -8,6 +8,18 @@
 npm install
 ```
 
+## Build & Run Locally
+
+```sh
+npm run dev
+```
+
+Once you ran the command above
+
+- Go to chrome://extensions/
+- Make sure you enabled "Developer Mode"
+- Load the package from /build folder
+
 ## Build
 
 ```sh

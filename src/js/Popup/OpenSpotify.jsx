@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import goodUrl from '../../img/good.png';
-import badUrl from '../../img/bad.png';
 import spotifyLogoGreen from '../../img/Spotify_Logo_RGB_Green_icon.png';
 import youTubeLogo from '../../img/Youtube_logo.png';
 import imageLetsStart from '../../img/giphy/lets-get-started.gif';
@@ -119,62 +117,16 @@ function PopupOpenTab() {
               e.preventDefault();
             }}
           >
-            <p>Search</p>
+            <p>Or search a song here</p>
             <input
               ref={refSearchInput}
               type="text"
               defaultValue={query}
               className="text-gray-700 appearance-none rounded-r rounded-l border border-gray-700 border-b block pl-4 pr-4 py-2 w-full  text-sm focus:placeholder-gray-600 focus:outline-none"
-              placeholder="Or search a song here"
+              placeholder="Search"
             />
           </form>
         </div>
-      </>
-    );
-  };
-
-  const renderSurvey = () => {
-    return (
-      <>
-        {showSurvey && (
-          <div className="flex items-center mt-2">
-            Did you like new Paradify?
-            <div className="ml-1">
-              <button
-                onClick={() => {
-                  ReactGA.event({
-                    category: 'Survey',
-                    action: 'Did you like new design',
-                    label: 'No',
-                  });
-                  showInfo('Thank you!');
-                  setShowSurvey(false); //
-                  // eslint-disable-next-line no-undef
-                  chrome.storage.sync.set({ survey_g_b_done: true }, () => {});
-                }}
-              >
-                <img src={badUrl} width="30" />
-              </button>
-            </div>
-            <div className="ml-2">
-              <button
-                onClick={() => {
-                  ReactGA.event({
-                    category: 'Survey',
-                    action: 'Did you like new design',
-                    label: 'Yes',
-                  });
-                  showInfo('Thank you!');
-                  setShowSurvey(false);
-                  // eslint-disable-next-line no-undef
-                  chrome.storage.sync.set({ survey_g_b_done: true }, () => {});
-                }}
-              >
-                <img src={goodUrl} width="30" />
-              </button>
-            </div>
-          </div>
-        )}
       </>
     );
   };
@@ -306,7 +258,6 @@ function PopupOpenTab() {
                 Contact
               </button>
             </div>
-            {renderSurvey()}
           </div>
         </div>
       </>

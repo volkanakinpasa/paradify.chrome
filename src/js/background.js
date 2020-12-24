@@ -62,7 +62,6 @@ function clearBadge() {
 const messageListener = (message, serder, callback) => {
   switch (message.type) {
     case 'onPopupOpened':
-      console.log(message.data);
       break;
     case 'clearBadge':
       clearBadge();

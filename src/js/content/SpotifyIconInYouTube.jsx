@@ -1,20 +1,39 @@
 import React from 'react';
-import spotifyLogoGreen from '../../img/Spotify_Icon_RGB_Green.png';
+import SpotifySvg from '../../img/SpotifySvg.svg';
 import {
   paradify,
   getSearchTextFromTrackInfo,
   getSpotifySearchUrl,
-  contentSpotifyAddButtonStyle,
 } from '../utils';
 
-function AddButtonContainer() {
+const contentSpotifyAddButtonStyle = {
+  padding: '4% 0 0 0',
+  border: 'none',
+  backgroundColor: 'transparent',
+  cursor: 'pointer',
+};
+const imageSpotifyAddButtonStyle = {
+  height: '100%',
+  top: '0px',
+  bottom: '0px',
+  display: 'block',
+  margin: 'auto',
+  width: '100%',
+};
+
+function AddIconIntoPlayerBar() {
   return (
     <>
       <button
+        id="paradify"
         style={contentSpotifyAddButtonStyle}
         onClick={() => {
           var trackInfo = paradify.getTrackInfo(location.href);
           const query = getSearchTextFromTrackInfo(trackInfo.track);
+          if (query.length === 0) {
+            alert('No played song/video clip found.');
+            return;
+          }
           window.open(getSpotifySearchUrl(query), '_blank');
           // eslint-disable-next-line no-undef
           chrome.runtime.sendMessage(
@@ -27,21 +46,22 @@ function AddButtonContainer() {
                 eventLabel: query,
               },
             },
-            function (response) {
-              console.log(response.farewell);
-            },
+            function (response) {},
           );
         }}
+        draggable="false"
+        className="playerButton ytp-button"
+        title="Add to Spotify"
       >
-        <img
-          // eslint-disable-next-line no-undef
-          src={chrome.runtime.getURL(spotifyLogoGreen)}
-          width="30"
+        <SpotifySvg
+          width="100%"
+          height="100%"
           title="Add to Spotify"
+          style={imageSpotifyAddButtonStyle}
         />
       </button>
     </>
   );
 }
 
-export default AddButtonContainer;
+export default AddIconIntoPlayerBar;

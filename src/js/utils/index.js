@@ -1,3 +1,5 @@
+import contentUtil from './contentUtil';
+
 const getSearchTextFromTrackInfo = (trackInfo) => {
   let q = '';
   if (trackInfo) {
@@ -78,6 +80,7 @@ function getPageName(url) {
 
   return pageName;
 }
+
 function readNowPlayingText(pageName) {
   if (pageName == 'powerapp') {
     return readPowerfm();
@@ -160,6 +163,7 @@ function readVimeo() {
   }
   return result;
 }
+
 function readDailyMotion() {
   var track = document.querySelector('[class^="VideoInfoTitle__videoTitle"]')
     .innerText;
@@ -305,7 +309,6 @@ const filterQuery = (query) => {
   });
 
   query = query.replace(/(\(|\[)[^\]]*(\)|\])/g, '');
-  console.log(query);
 
   return query;
 };
@@ -314,23 +317,8 @@ const getSpotifySearchUrl = (query) => {
   return `https://open.spotify.com/search/${filterQuery(query)}`;
 };
 
-const contentSpotifyAddButtonStyle = {
-  padding: '0',
-  border: 'none',
-  backgroundColor: 'transparent',
-  cursor: 'pointer',
-};
 const contentContainernStyle = {
   padding: '20%',
-};
-
-const imageSpotifyAddButtonStyle = {
-  height: '100%',
-  top: '0px',
-  bottom: '0px',
-  display: 'block',
-  margin: 'auto',
-  width: '100%',
 };
 
 export {
@@ -338,7 +326,6 @@ export {
   getSearchTextFromTrackInfo,
   paradify,
   getSpotifySearchUrl,
-  contentSpotifyAddButtonStyle,
-  imageSpotifyAddButtonStyle,
   contentContainernStyle,
+  contentUtil,
 };

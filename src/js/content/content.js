@@ -1,10 +1,10 @@
 /* eslint-disable prefer-arrow-callback */
 /* eslint-disable react/jsx-filename-extension */
 // import ParadifySpotifyAddContainer from './Content/ParadifySpotifyAddContainer.jsx';
-import AddIconIntoPlayerBar from './Content/AddIconIntoPlayerBar.jsx';
 import React from 'react';
 import { render } from 'react-dom';
-import { paradify } from './utils';
+import SpotifyIconInYouTube from './SpotifyIconInYouTube.jsx';
+import { paradify, contentUtil } from '../utils';
 
 // eslint-disable-next-line no-undef
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
@@ -28,31 +28,12 @@ const injectParadifyAddContainer = () => {
   paradifySpotifyAddContainer.style.cssText = 'display: none;';
 
   window.document.body.appendChild(paradifySpotifyAddContainer);
-  if (window.location.href.indexOf('music.youtube.com') > -1) {
-    render(
-      <AddIconIntoPlayerBar />,
-      window.document.getElementById(containerName),
-      // eslint-disable-next-line func-names
-      function () {
-        const spotifyButton = window.document.getElementById(containerName)
-          .firstChild;
-        try {
-          const menuContainer = window.document.querySelector(
-            'ytmusic-pivot-bar-renderer',
-          );
-          menuContainer.appendChild(spotifyButton, menuContainer.firstChild);
-        } catch (err) {
-          paradifySpotifyAddContainer.style.cssText =
-            'opacity: 1; right: 10px !important; position: fixed !important; bottom: 50px !important; margin: 5px; background-color: transparent; display: ;';
-        }
-      },
-    );
-  } else if (
-    window.location.href.indexOf('youtube.com') > -1 &&
-    window.location.href.indexOf('music.youtube.com') === 0
+  if (
+    window.location.href.indexOf('youtube.com/watch') > -1 &&
+    window.location.href.indexOf('music.youtube.com') === -1
   ) {
     render(
-      <AddIconIntoPlayerBar />,
+      <SpotifyIconInYouTube />,
       window.document.getElementById(containerName),
       // eslint-disable-next-line func-names
       function () {
@@ -80,7 +61,9 @@ const onLoad = () => {
   paradify.pageLoad();
 
   setTimeout(() => {
-    loadInjection();
+    contentUtil.youTubeTitle(() => {
+      loadInjection();
+    });
   }, 2000);
 };
 
