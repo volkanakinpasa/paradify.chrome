@@ -44,4 +44,4 @@ Give a ⭐️ if this project helped you!
 
 ---
 
-Would be ❤️ if you [donate me](https://github.com/kefranabg/readme-md-generator) for affording hosting/domain/ssl cost
+Would be ❤️ if you [donate me](https://www.paypal.com/paypalme/volkanakintr/5USD?locale.x=en_US) for affording hosting/domain/ssl cost
