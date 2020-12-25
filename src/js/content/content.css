@@ -1,4 +1,34 @@
-.paradify-content-spotify-icon-svg path {
-  margin: 0;
-  transform: translate(14%, 17%);
+.paradify-container-in-youtube {
+  display: none;
+}
+.paradify-container-in-youtube-absolute {
+  width: 52px;
+  height: 52px;
+  opacity: 1;
+  right: 13px !important;
+  position: fixed !important;
+  top: 50px !important;
+  margin: 5px;
+  background-color: transparent;
+  display: ;
+}
+
+.paradify-container-in-youtube-absolute:hover {
+  transform: scale(1.1);
+}
+
+.spotify-icon-in-yt-player {
+  height: '100%';
+  top: '0px';
+  bottom: '0px';
+  display: 'block';
+  margin: 'auto';
+  width: '100%';
+}
+
+.spotify-button-in-yt-player {
+  padding: '0';
+  border: 'none';
+  background-color: 'transparent';
+  cursor: 'pointer';
 }

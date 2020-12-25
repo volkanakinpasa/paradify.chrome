@@ -6,27 +6,14 @@ import {
   getSpotifySearchUrl,
 } from '../utils';
 
-const contentSpotifyAddButtonStyle = {
-  padding: '4% 0 0 0',
-  border: 'none',
-  backgroundColor: 'transparent',
-  cursor: 'pointer',
-};
-const imageSpotifyAddButtonStyle = {
-  height: '100%',
-  top: '0px',
-  bottom: '0px',
-  display: 'block',
-  margin: 'auto',
-  width: '100%',
-};
+import './content.css';
 
 function AddIconIntoPlayerBar() {
   return (
     <>
       <button
         id="paradify"
-        style={contentSpotifyAddButtonStyle}
+        className="spotify-button-in-yt-player"
         onClick={() => {
           var trackInfo = paradify.getTrackInfo(location.href);
           const query = getSearchTextFromTrackInfo(trackInfo.track);
@@ -51,13 +38,13 @@ function AddIconIntoPlayerBar() {
         }}
         draggable="false"
         className="playerButton ytp-button"
-        title="Add to Spotify"
+        title="Search in Spotify"
       >
         <SpotifySvg
           width="100%"
           height="100%"
-          title="Add to Spotify"
-          style={imageSpotifyAddButtonStyle}
+          title="Search in Spotify"
+          className="spotify-icon-in-yt-player"
         />
       </button>
     </>
