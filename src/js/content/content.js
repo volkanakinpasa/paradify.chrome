@@ -23,16 +23,20 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 });
 
 const injectParadifyAddContainer = () => {
-  const containerName = 'paradify-spotify-add-container';
-  const paradifyMainContainer = window.document.createElement('div');
-  paradifyMainContainer.id = containerName;
-  paradifyMainContainer.className = 'paradify-container-in-youtube';
-
-  window.document.body.appendChild(paradifyMainContainer);
   if (
     window.location.href.indexOf('youtube.com/watch') > -1 &&
     window.location.href.indexOf('music.youtube.com') === -1
   ) {
+    const containerName = 'paradify-spotify-add-container';
+    if (window.document.getElementById(containerName)) {
+      return;
+    }
+    const paradifyMainContainer = window.document.createElement('div');
+    paradifyMainContainer.id = containerName;
+    paradifyMainContainer.className = 'paradify-container-in-youtube';
+
+    window.document.body.appendChild(paradifyMainContainer);
+
     render(
       <SpotifyIconInYouTube />,
       window.document.getElementById(containerName),
