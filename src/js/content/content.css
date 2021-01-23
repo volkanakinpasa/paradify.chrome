@@ -7,23 +7,38 @@
   opacity: 1;
   right: 13px !important;
   position: fixed !important;
-  top: 50px !important;
+  bottom: 50px !important;
   margin: 5px;
   background-color: transparent;
   display: ;
+  z-index: 999999;
+}
+
+.paradify-container-in-youtube-absolute button {
+  width: 100%;
+  height: 100%;
 }
 
 .paradify-container-in-youtube-absolute:hover {
   transform: scale(1.1);
 }
 
-.spotify-icon-in-yt-player {
-  height: '100%';
-  top: '0px';
-  bottom: '0px';
-  display: 'block';
-  margin: 'auto';
-  width: '100%';
+.div-spotify-icon {
+  position: relative;
+  height: 100%;
+  top: 0px;
+  bottom: 0px;
+  display: block;
+  margin: auto;
+  width: 100%;
+}
+
+.img-spotify-icon {
+  position: absolute;
+  top: 23%;
+  left: 23%;
+  width: 60%;
+  height: 60%;
 }
 
 .spotify-button-in-yt-player {

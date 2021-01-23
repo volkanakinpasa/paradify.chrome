@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import spotifyLogoGreen from '../../img/Spotify_Logo_RGB_Green_icon.png';
 import youTubeLogo from '../../img/Youtube_logo.png';
+
+import '../../css/popup.css';
 import imageLetsStart from '../../img/giphy/lets-get-started.gif';
-import '../../css/index.css';
+
 import {
   initializeReactGA,
   getSearchTextFromTrackInfo,
@@ -13,47 +15,47 @@ import ReactGA from 'react-ga';
 
 import { supportedWebsite } from '../utils/constants';
 
-// eslint-disable-next-line no-undef
 const extensionId = chrome.runtime.id;
 
 function PopupOpenTab() {
   const [trackInfoBeforeSearch, setTrackInfoBeforeSearch] = useState(null);
-  const [notification, setNotification] = useState(null);
-  const [query, setQuery] = useState(null);
-  const [showSurvey, setShowSurvey] = useState(false);
-  const refSearchInput = React.useRef();
+  const [notification, setNotification] = useState({ message: '', type: '' });
+  const [query, setQuery] = useState('');
+  // const [showSurvey, setShowSurvey] = useState(false);
+  const refSearchInput = React.useRef(null);
 
   const readTrackInfoFromThepage = () => {
-    // eslint-disable-next-line no-undef
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      var url = tabs[0].url.toLowerCase();
-      // eslint-disable-next-line no-undef
-      chrome.tabs.sendMessage(
-        tabs[0].id,
-        { type: 'getTrackInfo', url },
-        function (data) {
-          if (data != undefined && data.success && data.track != undefined) {
-            setTrackInfoBeforeSearch(data.track);
-            const uri = new URL(url);
-            ReactGA.event({
-              category: 'Track',
-              action: 'Track Info Load - Found',
-              label: `${decodeURIComponent(uri.hostname)}`,
-            });
-          } else {
-            try {
+    chrome.tabs.query(
+      { active: true, currentWindow: true },
+      function (tabs: any) {
+        const url = tabs[0].url.toLowerCase();
+        chrome.tabs.sendMessage(
+          tabs[0].id,
+          { type: 'getTrackInfo', url },
+          function (data) {
+            if (data != undefined && data.success && data.track != undefined) {
+              setTrackInfoBeforeSearch(data.track);
               const uri = new URL(url);
               ReactGA.event({
                 category: 'Track',
-                action: 'Track Info Load - Not Found',
+                action: 'Track Info Load - Found',
                 label: `${decodeURIComponent(uri.hostname)}`,
               });
-              // eslint-disable-next-line no-empty
-            } catch {}
-          }
-        },
-      );
-    });
+            } else {
+              try {
+                const uri = new URL(url);
+                ReactGA.event({
+                  category: 'Track',
+                  action: 'Track Info Load - Not Found',
+                  label: `${decodeURIComponent(uri.hostname)}`,
+                });
+                // eslint-disable-next-line no-empty
+              } catch {}
+            }
+          },
+        );
+      },
+    );
   };
 
   const start = () => {
@@ -67,7 +69,7 @@ function PopupOpenTab() {
     start();
   }, []);
 
-  const search = (q) => {
+  const search = (q: string) => {
     ReactGA.event({
       category: 'Search',
       action: 'Search',
@@ -95,24 +97,28 @@ function PopupOpenTab() {
     getSearchResult();
   }, [query]);
 
-  const showInfo = (message) => {
-    const model = { type: 'info', message };
-    setNotification(model);
-    setTimeout(() => {
-      setNotification({});
-    }, 5000);
-  };
+  // const showInfo = (message: any) => {
+  //   const model: any = { type: 'info', message };
+  //   setNotification(model);
+  //   setTimeout(() => {
+  //     setNotification({} as any);
+  //   }, 5000);
+  // };
 
   const renderSearchForm = () => {
+    if (refSearchInput === undefined) {
+      return null;
+    }
     return (
       <>
         <div className="mt-4">
           <form
             onSubmit={(e) => {
               if (refSearchInput.current) {
-                setTrackInfoBeforeSearch({
-                  trackName: refSearchInput.current.value,
-                });
+                // const params = {
+                //   trackName: (refSearchInput.current as any).value,
+                // };
+                // setTrackInfoBeforeSearch(params);
               }
               e.preventDefault();
             }}
@@ -163,10 +169,7 @@ function PopupOpenTab() {
   };
 
   const renderMessageBox = () => {
-    if (!notification) {
-      return null;
-    }
-    switch (notification.type) {
+    switch (notification?.type as string) {
       case 'info':
         return (
           <div

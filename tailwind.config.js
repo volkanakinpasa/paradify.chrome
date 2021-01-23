@@ -9,7 +9,8 @@ module.exports = {
       xl: '1200px',
     },
     maxWidth: {
-      '15': '15rem',
+      15: '15rem',
+      700: '700px',
     },
   },
 
@@ -17,7 +18,7 @@ module.exports = {
   plugins: [],
 
   purge: {
-    content: ['./src/**/*.jsx'],
+    content: ['./src/**/*.tsx'],
   },
 };
 

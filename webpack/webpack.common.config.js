@@ -3,7 +3,7 @@ const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
+
 const WriteFilePlugin = require('write-file-webpack-plugin');
 const fileSystem = require('fs');
 
@@ -22,29 +22,30 @@ var fileExtensions = [
   'woff2',
 ];
 
-// load the secrets
-var alias = {};
+// // load the secrets
+// var alias = {};
 
-var secretsPath = path.join(
-  __dirname,
-  'secrets.' + process.env.NODE_ENV + '.js',
-);
+// var secretsPath = path.join(
+//   __dirname,
+//   'secrets.' + process.env.NODE_ENV + '.js',
+// );
 
-if (fileSystem.existsSync(secretsPath)) {
-  alias['secrets'] = secretsPath;
-}
+// if (fileSystem.existsSync(secretsPath)) {
+//   alias['secrets'] = secretsPath;
+// }
 
 const output = {
-  path: path.join(__dirname, '..', 'build'),
+  filename: '[name].js',
+  path: path.join(__dirname, '..', 'dist'),
 };
 
 const config = {
   entry: {
-    popup: path.join(__dirname, '..', 'src', 'js', 'popup', 'popup.js'),
-    options: path.join(__dirname, '..', 'src', 'js', 'options.js'),
-    background: path.join(__dirname, '..', 'src', 'js', 'background.js'),
-    content: path.join(__dirname, '..', 'src', 'js', 'content', 'content.js'),
+    options: path.join(__dirname, '..', 'src', 'js', 'option', 'index.tsx'),
+    background: path.join(__dirname, '..', 'src', 'js', 'background.ts'),
+    content: path.join(__dirname, '..', 'src', 'js', 'content', 'content.tsx'),
   },
+  target: 'web',
   output,
   module: {
     rules: [
@@ -54,9 +55,8 @@ const config = {
         use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader'],
       },
       {
-        test: new RegExp('.(' + fileExtensions.join('|') + ')$'),
-        loader: 'file-loader?name=[name].[ext]',
-        exclude: /node_modules/,
+        test: /\.(jpg|jpeg|png|gif|)$/,
+        use: 'file-loader?name=[name].[ext]',
       },
       {
         test: /\.html$/,
@@ -64,21 +64,18 @@ const config = {
         exclude: /node_modules/,
       },
       {
-        test: /\.(js|jsx)$/,
-        loader: 'babel-loader',
+        test: /\.(ts|tsx)$/,
+        loader: 'ts-loader',
         exclude: /node_modules/,
       },
       {
         test: /\.svg$/,
-        use: ['@svgr/webpack'],
+        use: ['@svgr/webpack', 'url-loader'],
       },
     ],
   },
   resolve: {
-    alias: alias,
-    extensions: fileExtensions
-      .map((extension) => '.' + extension)
-      .concat(['.jsx', '.js', '.css']),
+    extensions: ['*', '.tsx', '.ts', '.js', '.css'],
   },
   plugins: [
     // expose and write the allowed env vars on the compiled bundle
@@ -88,14 +85,7 @@ const config = {
       filename: '[name].bundle.css',
       chunkFilename: '[id].bundle.css',
     }),
-    new CopyPlugin({
-      patterns: [
-        {
-          from: 'src/manifest.json',
-          to: 'manifest.json',
-        },
-      ],
-    }),
+
     new HtmlWebpackPlugin({
       template: path.join(__dirname, '..', 'src', 'popup.html'),
       filename: 'popup.html',

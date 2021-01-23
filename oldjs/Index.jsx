@@ -33,7 +33,7 @@ function Index() {
   const [loginNeeded, setLoginNeeded] = useState(false);
   const [trackInfoBeforeSearch, setTrackInfoBeforeSearch] = useState(null);
   const [playlist, setPlaylist] = useState(null);
-  const [searchResult, setSearchResult] = useState(null);
+  const [searchResult, setSearchResult] = useState();
   const [searchReady, setSearchReady] = useState(null);
   const [me, setMe] = useState(null);
   // const [pageRead, setPageReady] = useState(true);
@@ -104,7 +104,7 @@ function Index() {
         if (typeof data === 'string') d = JSON.parse(data);
         else d = data;
 
-        if (d.error && d.error.status === 401) {
+        if (d.body.error && d.body.error.status === 401) {
           try {
             ReactGA.event({
               category: 'Token',
@@ -344,12 +344,7 @@ function Index() {
         });
         // eslint-disable-next-line no-empty
       } catch {}
-
-      if (
-        !refPlaylist ||
-        !refPlaylist.current ||
-        refPlaylist.current.value === ''
-      ) {
+      if ((refPlaylist.current as any).value === '') {
         showError('Please select a playlist');
         ReactGA.event({
           category: 'Warning',
@@ -362,9 +357,9 @@ function Index() {
       try {
         axios
           .post(getPlaylistUrl(), null, {
-            params: { playlistId: refPlaylist.current.value, trackId },
+            params: { playlistId: (refPlaylist.current as any).value, trackId },
           })
-          .then(function (response) {
+          .then(function (response: any) {
             if (response.data.error != null) {
               ReactGA.event({
                 category: 'Track',
@@ -402,7 +397,7 @@ function Index() {
   };
 
   let audio;
-  const play = (url, currentPlayingIndexParam, trackName) => {
+  const play = (url: string, currentPlayingIndexParam: any, trackName) => {
     if (currentAudio != null) {
       currentAudio.pause();
     }
@@ -530,7 +525,7 @@ function Index() {
             onSubmit={(e) => {
               if (refSearchInput.current) {
                 setTrackInfoBeforeSearch({
-                  trackName: refSearchInput.current.value,
+                  trackName: (refSearchInput.current as any).value,
                 });
               }
               e.preventDefault();
