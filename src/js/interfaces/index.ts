@@ -12,14 +12,20 @@ interface DialogBehavior {
 
 interface DialogMessage {
   title: string;
+  text?: string;
+  link?: { href: string; text: string };
+  image?: { url: string };
+}
+interface DialogConfirmation {
   text: string;
-  url?: string;
-  imgUrl?: string;
+  data: any;
+  dataType: string;
 }
 
 interface Dialog {
   behavior: DialogBehavior;
   message: DialogMessage;
+  confirmation?: DialogConfirmation;
 }
 
 export { Token, Dialog, DialogBehavior, DialogMessage };

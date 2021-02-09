@@ -9,20 +9,20 @@
   width: 250px;
   background-color: #131313;
   color: #cacaca;
-  box-shadow: 0 0 3px 3px rgb(0 0 0 / 28%);
+  box-shadow: 2px 2px 2px 1px rgb(152 148 148 / 20%);
   border-radius: 7px;
   padding: 5px;
 }
 
 .p-d-paradify-dialog-in-youtube-show {
   opacity: 1;
-  -webkit-transition: opacity 1s ease-in;
-  display: ;
+  /* -webkit-transition: opacity 1s ease-in;
+  display: ; */
 }
 .p-d-paradify-dialog-in-youtube-hide {
   opacity: 0;
-  -webkit-transition: opacity 1s ease-out;
-  display: ;
+  /* -webkit-transition: opacity 1s ease-out;
+  display: ; */
 }
 
 .p-d-arrow {
@@ -58,6 +58,14 @@
   margin-bottom: 20px;
 }
 
+.p-d-mt-5 {
+  margin-top: 5px;
+}
+
+.p-d-mb-5 {
+  margin-top: 5px;
+}
+
 .p-d-mt-10 {
   margin-top: 10px;
 }
@@ -83,6 +91,7 @@
   padding-top: 10px;
   padding-bottom: 10px;
 }
+
 .p-d-w200 {
   width: 200px;
 }
@@ -104,7 +113,7 @@
 }
 
 .p-d-text-2xl {
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .p-d-text-3xl {
@@ -139,4 +148,8 @@
 
 .p-d-w-full {
   width: 100%;
+}
+
+.p-d-line-h-22px {
+  line-height: 22px;
 }

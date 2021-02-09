@@ -6,11 +6,11 @@ import { getRandomInstalledGif, storageUtil } from '../utils';
 import '../../css/index.css';
 import paradifyLogo from '../../img/paradify_logo.png';
 import questionMark from '../../img/question_mark.png';
-import launch from '../../img/launch.png';
 import ModalDialogInYouTube from '../content/dialog/ModalDialogInYouTube';
 import ReactGA from 'react-ga';
 import { initializeReactGA } from '../utils';
-
+import GithubCorner from 'react-github-corner';
+import launch from '../../img/launch.png';
 const Option: FC = () => {
   const [tokenState, setTokenState] = useState<Token>(null);
   const [spotifyOptionState, setSpotifyOptionState] = useState(null);
@@ -18,8 +18,6 @@ const Option: FC = () => {
   const [tooltipHowAutoSaveWork, setTooltipHowAutoSaveWork] = useState(false);
 
   const loadStorageAndUpdateStates = async () => {
-    console.log('loadStorageAndUpdateStates');
-
     const spotifyTokenData = await storageUtil.getSpotifyToken();
 
     setTokenState(spotifyTokenData);
@@ -27,10 +25,6 @@ const Option: FC = () => {
     const spotifyOption: string = await storageUtil.getSpotifyOption();
     setSpotifyOptionState(spotifyOption);
   };
-
-  // useEffect(() => {
-  //   console.log('use effect tokenState, spotifyOptionState');
-  // }, [tokenState, spotifyOptionState]);
 
   const loadWelcomeMessage = async () => {
     const installed = await storageUtil.isInstalled();
@@ -41,7 +35,7 @@ const Option: FC = () => {
         message: {
           title: 'You made it!',
           text: 'Enjoy using Paradify',
-          imgUrl: getRandomInstalledGif(),
+          image: { url: getRandomInstalledGif() },
         },
       };
       chrome.runtime.sendMessage({
@@ -53,7 +47,6 @@ const Option: FC = () => {
   };
 
   useEffect(() => {
-    console.log('use effect');
     loadStorageAndUpdateStates();
     injectDialogWindow();
     loadWelcomeMessage();
@@ -61,8 +54,6 @@ const Option: FC = () => {
   }, []);
 
   const saveOption = async (option: SpotifyOption) => {
-    console.log(`Option Changed ${option.toString()}`);
-
     await storageUtil.setSpotifyIconClickActionOption(option);
     setSpotifyOptionState(option);
     ReactGA.event({
@@ -82,16 +73,16 @@ const Option: FC = () => {
     });
   };
 
-  // const loginSpotify = async () => {
-  //   chrome.runtime.sendMessage({
-  //     type: 'openAuthRedirectUrl',
-  //   });
+  const loginSpotify = async () => {
+    chrome.runtime.sendMessage({
+      type: 'openAuthRedirectUrl',
+    });
 
-  //   const token = await storageUtil.waitAndGetFirstLoginResponse();
-  //   if (token) {
-  //     setTokenState(token);
-  //   }
-  // };
+    const token = await storageUtil.waitAndGetFirstLoginResponse();
+    if (token) {
+      setTokenState(token);
+    }
+  };
 
   const renderLoginContainer = () => {
     return (
@@ -105,7 +96,12 @@ const Option: FC = () => {
           </div>
         )}
         {(!tokenState || !tokenState.access_token) && (
-          <div>You are not logged in yet.</div>
+          <div>
+            You are not logged in.{' '}
+            <button className="underline" onClick={() => loginSpotify()}>
+              Login
+            </button>
+          </div>
         )}
       </>
     );
@@ -126,12 +122,10 @@ const Option: FC = () => {
           />
           <label htmlFor="AutoSave">
             Auto Save (Recommended){' '}
-            <span className="text-red-700 text-base">NEW</span>
             <div className="mt-2 text-gray-700">
               <p>
-                Paradify adds <b>tracks</b> from YouTube to your Spotify
-                playlist with the name <b>{'Paradify Playlist'}</b> so you can
-                listen to it later. For this option you need to login in
+                Paradify adds tracks from YouTube to your Spotify playlist. So
+                you can listen to it later. For this option you need to login in
                 Spotify.
                 <button
                   className="ml-2 underline"
@@ -167,6 +161,11 @@ const Option: FC = () => {
                     How does it work?
                   </div>
                 </button>
+              </p>
+              <p className=" mt-2 text-red-900">
+                Be aware that Paradify cannot always find the tracks on Spotify
+                due to the title of YouTube video. We do our best to filter and
+                clean it before searching on Spotify.
               </p>
             </div>
             {tooltipLogin && (
@@ -204,7 +203,8 @@ const Option: FC = () => {
           <label htmlFor="OpenNewTab">
             Open and Search
             <p className="mt-2 text-gray-700">
-              Paradify opens Spotify and finds <b>tracks</b>. You listen.
+              Paradify opens Spotify and finds tracks. It does not automatically
+              add in your playlist.
             </p>
           </label>
         </div>
@@ -230,9 +230,9 @@ const Option: FC = () => {
   return (
     <>
       <div className="h-10 bg-blue-600 text-white w-full text-center flex items-center justify-center text-sm ">
-        <img src={launch} className="mr-2" />
-        Paradify has been upgraded! There is a new option available{' '}
-        {'"Auto Save"'}. Please choose one of the options.
+        <img src={launch} className="mr-2" /> Paradify now supports Playlist
+        search. You can add all tracks of Youtube video in your Spotify
+        playlist.
       </div>
       <div className="max-w-700 mx-auto text-sm text-gray-800">
         <div className="my-5">
@@ -287,19 +287,33 @@ const Option: FC = () => {
               </div>
             </li>
             <li className="w-full sm:w-1/3 py-5 border-dotted border-b border-t">
+              <div>Github</div>
+            </li>
+            <li className="w-full sm:w-2/3 py-5 border-dotted border-b border-t">
+              <div>
+                Paradify is an open source chrome extension. Here is the
+                repository{' '}
+                <button
+                  onClick={() => {
+                    window.location.href =
+                      'https://github.com/volkanakinpasa/youtubetospotify';
+                    ReactGA.event({
+                      category: 'Options',
+                      action: 'Github - youtubetospotify',
+                      label: '',
+                    });
+                  }}
+                >
+                  <div className="flex items-baseline underline">link</div>
+                </button>
+              </div>
+            </li>
+            <li className="w-full sm:w-1/3 py-5 border-dotted border-b border-t">
               <div>Donation</div>
             </li>
             <li className="w-full sm:w-2/3 py-5 border-dotted border-b border-t">
               <div>
                 We need your Love, we need your support.{' '}
-                {/* <a
-                  href="https://www.paypal.com/paypalme/volkanakintr/5USD?locale.x=en_US"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="underline"
-                >
-                  Please Donate to Us
-                </a> */}
                 <button
                   onClick={() => {
                     window.location.href =
@@ -326,6 +340,7 @@ const Option: FC = () => {
           </div>
         </div>
       </div>
+      <GithubCorner href="https://github.com/volkanakinpasa/youtubetospotify" />
     </>
   );
 };

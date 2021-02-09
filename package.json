@@ -9,18 +9,25 @@
     "lint:fix": "eslint \"src/**/*.{js,jsx}\" --fix",
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
     "lint-staged": "lint-staged",
-    "commit": "git-cz"
+    "commit": "git-cz",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "dependencies": {
     "axios": "^0.21.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "react-ga": "^3.0.0"
+    "react-ga": "^3.0.0",
+    "react-github-corner": "^2.5.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-typescript": "^7.12.7",
+    "@storybook/addon-actions": "^6.1.15",
+    "@storybook/addon-essentials": "^6.1.15",
+    "@storybook/addon-links": "^6.1.15",
+    "@storybook/react": "^6.1.15",
     "@svgr/webpack": "^5.5.0",
     "@types/chrome": "0.0.127",
     "@types/classnames": "^2.2.11",
@@ -37,6 +44,7 @@
     "classnames": "^2.2.6",
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^6.0.3",
+    "core-js": "^3.8.3",
     "css-loader": "^3.6.0",
     "eslint": "^7.16.0",
     "eslint-plugin-import": "^2.22.1",

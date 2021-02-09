@@ -1,13 +1,19 @@
 import '../img/16.png';
 import '../img/48.png';
 import '../img/128.png';
-import { DEPLOYMENT_1, getRedirectAuthUrl, URLS } from './utils/constants';
+import {
+  DEPLOYMENT_VERSION,
+  getRedirectAuthUrl,
+  URLS,
+  ENVIRONMENTS,
+} from './utils/constants';
 import { storageUtil } from './utils';
 import { SpotifyOption } from './enums';
 
 const { BASE_URL } = URLS;
 
 const gaSendEvent = (data: any) => {
+  if (process.env.NODE_ENV !== ENVIRONMENTS.PRODUCTION) return;
   const { eventCategory, eventAction, eventLabel } = data;
   // Standard Google Universal Analytics code
   // noinspection OverlyComplexFunctionJS
@@ -86,6 +92,12 @@ function openAuthRedirectUrl() {
   openTab(getRedirectAuthUrl());
 }
 
+function dialogAddAll(data: any) {
+  chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, { data: data, type: 'dialogAddAll' });
+  });
+}
+
 const messageListener = (event: any, serder: any, callback: any) => {
   switch (event.type) {
     case 'addIconClicked':
@@ -108,6 +120,9 @@ const messageListener = (event: any, serder: any, callback: any) => {
     case 'openAuthRedirectUrl':
       openAuthRedirectUrl();
       break;
+    case 'dialogAddAll':
+      dialogAddAll(event.data);
+      break;
   }
 };
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
@@ -128,7 +143,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
   if (details.reason == 'install') {
     //Save Auto Saved
     storageUtil.setSpotifyIconClickActionOption(SpotifyOption.AutoSave);
-    storageUtil.setStorage(DEPLOYMENT_1, 1);
+    storageUtil.setStorage(DEPLOYMENT_VERSION, 1);
     openTab(`chrome-extension://${chrome.runtime.id}/options.html`);
     gaSendEvent({
       pageName: 'Chrome Backgroud',
@@ -137,12 +152,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
       eventLabel: '',
     });
   } else if (details.reason == 'update') {
-    storageUtil.getStorage(DEPLOYMENT_1).then((data) => {
-      if (!data) {
-        storageUtil.setStorage(DEPLOYMENT_1, 1);
-        openTab(`chrome-extension://${chrome.runtime.id}/options.html`);
-      }
-    });
+    storageUtil.setStorage(DEPLOYMENT_VERSION, 1);
     gaSendEvent({
       pageName: 'Chrome Backgroud',
       eventCategory: 'Extension',

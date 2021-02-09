@@ -1,6 +1,6 @@
 import contentUtil from './contentUtil';
 import storageUtil from './storageUtil';
-import { ENVIRONMENTS } from './constants';
+import { ENVIRONMENTS } from './utils/constants';
 
 const initializeReactGA = (ReactGA: any, pageName: string) => {
   if (process.env.NODE_ENV !== ENVIRONMENTS.PRODUCTION) return;
@@ -151,7 +151,7 @@ const getRandomInstalledGif = (): string => {
 const getRandomErrorGif = (): string => {
   const images = [
     'https://media.giphy.com/media/TqiwHbFBaZ4ti/giphy.gif',
-    'https://media.giphy.com/media/GoHD0xCYwjM5y/giphy.gif',
+    'https://media.giphy.com/media/1RkDDoIVs3ntm/giphy.gif',
   ];
   const index = Math.floor(Math.random() * images.length);
   return images[index];

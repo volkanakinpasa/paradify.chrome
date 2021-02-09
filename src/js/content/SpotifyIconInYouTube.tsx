@@ -12,11 +12,15 @@ import {
   getRandomSuccessGif,
   getRandomErrorGif,
 } from '../utils';
-import { getPlaylistUrl, getRefreshUrl } from '../utils/constants';
+import {
+  getAddTracksUrl,
+  getAddTrackUrl,
+  getRefreshUrl,
+} from '../utils/constants';
 import { Dialog, Token } from '../interfaces';
 
-import './content.css';
 import { SpotifyOption } from '../enums';
+import './content.css';
 
 const { getSpotifyToken, getSpotifyOption } = storageUtil;
 
@@ -105,8 +109,8 @@ const SpotifyIconInYouTube: FC = () => {
       message: {
         title,
         text,
-        imgUrl: getRandomSuccessGif(),
-        url: playlistUrl,
+        image: { url: getRandomSuccessGif() },
+        link: { href: playlistUrl, text: 'Open your playlist' },
       },
     };
 
@@ -116,13 +120,17 @@ const SpotifyIconInYouTube: FC = () => {
     });
   };
 
-  const notSaved = () => {
+  const notSaved = (q: string = null) => {
     const dialog: Dialog = {
       behavior: { autoHide: true },
       message: {
         title: 'Not Found',
         text: `The video was not found in Spotify.`,
-        imgUrl: getRandomFailedGif(),
+        image: { url: getRandomFailedGif() },
+        link: {
+          href: getSpotifySearchUrl(q),
+          text: 'Open and search on Spotify',
+        },
       },
     };
 
@@ -132,9 +140,25 @@ const SpotifyIconInYouTube: FC = () => {
     });
   };
 
+  const combineTrackNames = (
+    list: Array<{ track: { name: string } }> = [],
+    itemLimit = 5,
+  ): string => {
+    try {
+      return list
+        .slice(0, itemLimit)
+        .map((item) => {
+          return `"${item.track.name}"`;
+        })
+        .join(', ');
+    } catch {
+      return '';
+    }
+  };
+
   const searchAndSave = async (q: string) => {
     try {
-      const url = getPlaylistUrl();
+      const url = getAddTrackUrl();
       setIsSaving(true);
       const response = await axios.post(url, null, {
         params: { q },
@@ -153,8 +177,90 @@ const SpotifyIconInYouTube: FC = () => {
             eventLabel: q,
           },
         });
+      } else if (response.data?.data?.message === 'CONFIRMATION') {
+        const { data } = response.data;
+        const { type } = data;
+        switch (type) {
+          case 'playlist':
+            const { playlist, playlistTracks } = data;
+            const { name: playlistName } = playlist;
+
+            const trackNameString = combineTrackNames(playlistTracks);
+
+            const confirmationText = `A playlist has been found "${playlistName}" and has ${
+              playlist.tracks.total
+            } tracks in it. Do you want to add all ${
+              playlist.tracks.total
+            } tracks? ${
+              trackNameString
+                ? 'Some of the track names: ' + trackNameString
+                : ''
+            }`;
+
+            const playlistDialog: Dialog = {
+              behavior: { autoHide: false },
+              message: {
+                title: 'Playlist found',
+              },
+              confirmation: {
+                text: confirmationText,
+                data: playlist,
+                dataType: 'playlist',
+              },
+            };
+
+            chrome.runtime.sendMessage({
+              type: 'showDialog',
+              data: playlistDialog,
+            });
+
+            //GA
+            chrome.runtime.sendMessage({
+              type: 'addIconClicked',
+              data: {
+                pageName: 'YouTube',
+                eventCategory: 'YouTube Video',
+                eventAction: 'Spotify Icon Clicked - AutoSave - Multi',
+                eventLabel: data.name, //playlist name
+              },
+            });
+            break;
+          // case 'album':
+          //   const { album } = data;
+          //   const { name, total_tracks } = album;
+
+          //   const dialog: Dialog = {
+          //     behavior: { autoHide: false },
+          //     message: {
+          //       title: 'Album found',
+          //     },
+          //     confirmation: {
+          //       text: `Found album "${name}". It has ${total_tracks} tracks. Do you want to add all ${total_tracks} tracks?`,
+          //       data: album,
+          //       dataType: 'album',
+          //     },
+          //   };
+
+          //   chrome.runtime.sendMessage({
+          //     type: 'showDialog',
+          //     data: dialog,
+          //   });
+          //   break;
+          default:
+            notSaved(q);
+            chrome.runtime.sendMessage({
+              type: 'addIconClicked',
+              data: {
+                pageName: 'YouTube',
+                eventCategory: 'YouTube Video',
+                eventAction: 'Spotify Icon Clicked - AutoSave - Not Saved',
+                eventLabel: q,
+              },
+            });
+            break;
+        }
       } else {
-        notSaved();
+        notSaved(q);
         chrome.runtime.sendMessage({
           type: 'addIconClicked',
           data: {
@@ -171,7 +277,7 @@ const SpotifyIconInYouTube: FC = () => {
         message: {
           title: 'Ops!',
           text: `Something went wrong. Please try again later`,
-          imgUrl: getRandomErrorGif(),
+          image: { url: getRandomErrorGif() },
         },
       };
 
@@ -190,9 +296,7 @@ const SpotifyIconInYouTube: FC = () => {
         },
       });
     } finally {
-      setTimeout(() => {
-        setIsSaving(false);
-      }, 400);
+      setIsSaving(false);
     }
   };
 
@@ -275,8 +379,79 @@ const SpotifyIconInYouTube: FC = () => {
     });
   };
 
+  const addAll = async (data: any) => {
+    try {
+      const url = getAddTracksUrl();
+      setIsSaving(true);
+      const response = await axios.post(url, {
+        id: data.id,
+        type: data.type,
+      });
+      if (response.data?.data?.message === 'OK') {
+        const { data: dataResponse } = response.data;
+        const { trackIds, playlistUrl } = dataResponse;
+        saved(trackIds, playlistUrl);
+        chrome.runtime.sendMessage({
+          type: 'addIconClicked',
+          data: {
+            pageName: 'YouTube',
+            eventCategory: 'YouTube Video',
+            eventAction: 'Spotify Icon Clicked - AutoSave - Multi - Saved',
+            eventLabel: data.name, //playlist name
+          },
+        });
+      } else {
+        notSaved();
+        chrome.runtime.sendMessage({
+          type: 'addIconClicked',
+          data: {
+            pageName: 'YouTube',
+            eventCategory: 'YouTube Video',
+            eventAction: 'Spotify Icon Clicked - AutoSave - Multi - Not Saved',
+            eventLabel: data.name, //playlist name
+          },
+        });
+      }
+    } catch (err) {
+      const dialog: Dialog = {
+        behavior: { autoHide: true, hideTimeout: 4000 },
+        message: {
+          title: 'Ops!',
+          text: `Something went wrong. Please try again later`,
+          image: { url: getRandomErrorGif() },
+        },
+      };
+
+      chrome.runtime.sendMessage({
+        type: 'showDialog',
+        data: dialog,
+      });
+
+      chrome.runtime.sendMessage({
+        type: 'addIconClicked',
+        data: {
+          pageName: 'YouTube',
+          eventCategory: 'YouTube Video',
+          eventAction: 'Spotify Icon Clicked - AutoSave - Multi - Error',
+          eventLabel: data.name,
+        },
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   useEffect(() => {
     interceptAxios();
+    chrome.runtime.onMessage.addListener(function (
+      event,
+      sender,
+      sendResponse,
+    ) {
+      if (event.type == 'dialogAddAll') {
+        addAll(event.data);
+      }
+    });
   }, []);
 
   return (

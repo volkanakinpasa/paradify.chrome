@@ -1,19 +1,31 @@
 import React, { FC, useEffect, useState } from 'react';
-// import { storageUtil } from '../../utils';
-import { TIMEOUT_MS } from '../../utils/constants';
-
 import classNames from 'classnames';
 import paradifyLogo from '../../../img/paradify_logo.png';
 import dialogClose from '../../../img/dialog_close.png';
-
-import './dialog.css';
 import { Dialog, DialogBehavior } from '../../interfaces';
-
-// const { getToken, getSpotifyOption } = storageUtil;
+import { TIMEOUT_MS } from '../../utils/constants';
+import './dialog.css';
 
 const ModalDialogInYouTube: FC = () => {
   const [showDialog, setShowDialog] = useState(false);
   const [dialog, setDialog] = useState<Dialog>(null);
+  const [timeoutInterval, setTimeoutInterval] = useState<NodeJS.Timeout>(null);
+
+  // const onMouseOver = () => {
+  //   console.log('over');
+  //   clearTimeout(timeoutInterval);
+  //   setTimeoutInterval(null);
+  //   setShowDialog(true);
+  // };
+
+  // const onMouseOut = () => {
+  //   console.log('out');
+  //   clearTimeout(timeoutInterval);
+  //   const timeout = setTimeout(() => {
+  //     setShowDialog(false);
+  //   }, 4000);
+  //   setTimeoutInterval(timeout);
+  // };
 
   useEffect(() => {
     chrome.runtime.onMessage.addListener(function (
@@ -23,10 +35,12 @@ const ModalDialogInYouTube: FC = () => {
     ) {
       if (event.type === 'showDialog') {
         setDialog(event.data);
+        clearTimeout(timeoutInterval);
         if (event.data.behavior.autoHide) {
-          setTimeout(() => {
+          const timeout = setTimeout(() => {
             setShowDialog(false);
           }, event.data.behavior.hideTimeout || TIMEOUT_MS);
+          setTimeoutInterval(timeout);
         }
         setShowDialog(true);
       }
@@ -36,6 +50,15 @@ const ModalDialogInYouTube: FC = () => {
   const close = () => {
     setShowDialog(false);
     setDialog(null);
+  };
+
+  const addAll = (data: any) => {
+    close();
+
+    chrome.runtime.sendMessage({
+      type: 'dialogAddAll',
+      data,
+    });
   };
 
   const renderClose = (behavior: DialogBehavior) => {
@@ -87,38 +110,50 @@ const ModalDialogInYouTube: FC = () => {
                 </div>
               </div>
 
-              {dialog.message.imgUrl && (
+              {dialog.message.image && (
                 <div
                   className={classNames(
                     'p-d-paradify-dialog-in-youtube-inner',
                     'p-d-mx-auto p-d-px-4 p-d-py-4',
-                    'p-d-items-center p-d-py-2 p-d-text-xl p-d-text-center p-d-mt-10',
+                    'p-d-items-center p-d-py-2 p-d-text-xl p-d-text-center p-d-mt-5',
                   )}
                 >
-                  <img className="p-d-w-full" src={dialog.message.imgUrl} />
+                  <img className="p-d-w-full" src={dialog.message.image.url} />
                 </div>
               )}
               <div
                 className={classNames(
                   'p-d-paradify-dialog-in-youtube-inner',
                   'p-d-mx-auto p-d-px-4 p-d-py-4',
-                  'p-d-items-center p-d-py-2 p-d-text-xl p-d-text-center p-d-mt-10',
+                  'p-d-items-center p-d-py-2 p-d-text-xl p-d-line-h-22px p-d-text-center p-d-mt-5',
                 )}
               >
-                {dialog.message.text}
-                {dialog.message.url && (
+                {dialog.message.text && dialog.message.text}
+                {dialog.message.link && (
                   <>
-                    <div className="p-d-mt-10">
-                      Click{' '}
+                    <div className="p-d-mt-5">
                       <a
-                        href={dialog.message.url}
+                        href={dialog.message.link.href}
                         className="p-d-link"
                         target="_blank"
                         rel="noreferrer"
                       >
-                        here
-                      </a>{' '}
-                      to open
+                        {dialog.message.link.text}
+                      </a>
+                    </div>
+                  </>
+                )}
+                {dialog.confirmation && (
+                  <>
+                    <div>{dialog.confirmation.text}</div>
+                    <div>
+                      {' '}
+                      <button
+                        className="p-d-mt-5"
+                        onClick={() => addAll(dialog.confirmation.data)}
+                      >
+                        Add All
+                      </button>
                     </div>
                   </>
                 )}
