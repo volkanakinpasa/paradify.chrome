@@ -11,18 +11,27 @@ import {
   getRandomFailedGif,
   getRandomSuccessGif,
   getRandomErrorGif,
+  getRandomDonationGif,
 } from '../utils';
 import {
   getAddTracksUrl,
   getAddTrackUrl,
   getRefreshUrl,
+  URLS,
+  DONATION_SHOW_SAVED_COUNTS,
+  TIMEOUT_MS,
 } from '../utils/constants';
 import { Dialog, Token } from '../interfaces';
 
 import { SpotifyOption } from '../enums';
 import './content.css';
 
-const { getSpotifyToken, getSpotifyOption } = storageUtil;
+const {
+  getSpotifyToken,
+  getSpotifyOption,
+  getSavedCount,
+  increaseSavedCount,
+} = storageUtil;
 
 const SpotifyIconInYouTube: FC = () => {
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -94,7 +103,25 @@ const SpotifyIconInYouTube: FC = () => {
     });
   };
 
-  const saved = (trackIds: string[] = [], playlistUrl: string) => {
+  const showDonationDialog = () => {
+    const dialog: Dialog = {
+      behavior: { autoHide: false },
+      message: {
+        title: 'Please Donate to Paradify',
+        text:
+          'We need your love, we need your support in order to keep Paradify on and effort our costs',
+        image: { url: getRandomDonationGif() },
+        link: { href: URLS.DONATION_PAYPAL, text: 'Please Donate to Paradify' },
+      },
+    };
+
+    chrome.runtime.sendMessage({
+      type: 'showDialog',
+      data: dialog,
+    });
+  };
+
+  const saved = async (trackIds: string[] = [], playlistUrl: string) => {
     let title = '';
     let text = '';
 
@@ -118,6 +145,15 @@ const SpotifyIconInYouTube: FC = () => {
       type: 'showDialog',
       data: dialog,
     });
+
+    await increaseSavedCount();
+    const savedCount = await getSavedCount();
+
+    if (DONATION_SHOW_SAVED_COUNTS.includes(savedCount)) {
+      setTimeout(() => {
+        showDonationDialog();
+      }, TIMEOUT_MS);
+    }
   };
 
   const notSaved = (q: string = null) => {

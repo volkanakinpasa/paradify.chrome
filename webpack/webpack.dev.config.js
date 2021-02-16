@@ -7,16 +7,16 @@ const publicPath = '/';
 const PORT = 8080;
 
 var options = {
-  entry: {
-    'content-test': path.join(
-      __dirname,
-      '..',
-      'src',
-      'js',
-      'content-test',
-      'index.tsx',
-    ),
-  },
+  // entry: {
+  //   'content-test': path.join(
+  //     __dirname,
+  //     '..',
+  //     'src',
+  //     'js',
+  //     'content-test',
+  //     'index.tsx',
+  //   ),
+  // },
   devServer: {
     hot: true,
     disableHostCheck: true,
@@ -54,18 +54,18 @@ var options = {
         },
       ],
     }),
-    new HtmlWebpackPlugin({
-      template: path.join(
-        __dirname,
-        '..',
-        'src',
-        'js',
-        'content-test',
-        'content-test.html',
-      ),
-      filename: 'content-test.html',
-      chunks: ['content-test'],
-    }),
+    // new HtmlWebpackPlugin({
+    //   template: path.join(
+    //     __dirname,
+    //     '..',
+    //     'src',
+    //     'js',
+    //     // 'content-test',
+    //     // 'content-test.html',
+    //   ),
+    //   filename: 'content-test.html',
+    //   chunks: ['content-test'],
+    // }),
   ],
 };
 

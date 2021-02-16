@@ -9,7 +9,6 @@ import './dialog.css';
 const ModalDialogInYouTube: FC = () => {
   const [showDialog, setShowDialog] = useState(false);
   const [dialog, setDialog] = useState<Dialog>(null);
-  const [timeoutInterval, setTimeoutInterval] = useState<NodeJS.Timeout>(null);
 
   // const onMouseOver = () => {
   //   console.log('over');
@@ -28,6 +27,7 @@ const ModalDialogInYouTube: FC = () => {
   // };
 
   useEffect(() => {
+    let timeout: NodeJS.Timeout;
     chrome.runtime.onMessage.addListener(function (
       event,
       sender,
@@ -35,12 +35,11 @@ const ModalDialogInYouTube: FC = () => {
     ) {
       if (event.type === 'showDialog') {
         setDialog(event.data);
-        clearTimeout(timeoutInterval);
+        clearTimeout(timeout);
         if (event.data.behavior.autoHide) {
-          const timeout = setTimeout(() => {
+          timeout = setTimeout(() => {
             setShowDialog(false);
           }, event.data.behavior.hideTimeout || TIMEOUT_MS);
-          setTimeoutInterval(timeout);
         }
         setShowDialog(true);
       }

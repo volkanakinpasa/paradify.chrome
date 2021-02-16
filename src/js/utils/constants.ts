@@ -12,6 +12,7 @@ const URLS = {
   ADD_TRACK_PATH: 'api/track',
   ADD_TRACKS_PATH: 'api/tracks',
   REFRESH_PATH: 'api/refresh-token',
+  DONATION_PAYPAL: 'https://www.patreon.com/volkanakin',
 };
 
 const getRedirectAuthUrl = (): string =>
@@ -34,11 +35,12 @@ const supportedWebsite = {
 
 const TIMEOUT_MS = 9000;
 
+const SAVED_COUNT = 'SAVED_COUNT';
+const DONATION_SHOW_SAVED_COUNTS = [5, 15, 30, 60, 100, 150, 200];
 const SPOTIFY_ICON_CLICK_ACTION_OPTION = 'SPOTIFY_ICON_CLICK_ACTION_OPTION';
 const SPOTIFY_TOKEN = 'SPOTIFY_TOKEN';
 const DEPLOYMENT_VERSION = 'DEPLOYMENT_7.1.0';
 const EXTENSION_INSTALLED = 'EXTENSION_INSTALLED';
-
 export {
   getRedirectAuthUrl,
   getSearchUrl,
@@ -48,6 +50,7 @@ export {
   getRefreshUrl,
   supportedWebsite,
   TIMEOUT_MS,
+  SAVED_COUNT,
   SPOTIFY_ICON_CLICK_ACTION_OPTION,
   SPOTIFY_TOKEN,
   DEPLOYMENT_VERSION,
@@ -55,4 +58,5 @@ export {
   URLS,
   ENVIRONMENTS,
   DOMAINS,
+  DONATION_SHOW_SAVED_COUNTS,
 };

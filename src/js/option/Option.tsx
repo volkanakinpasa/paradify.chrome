@@ -11,6 +11,7 @@ import ReactGA from 'react-ga';
 import { initializeReactGA } from '../utils';
 import GithubCorner from 'react-github-corner';
 import launch from '../../img/launch.png';
+import { URLS } from '../utils/constants';
 const Option: FC = () => {
   const [tokenState, setTokenState] = useState<Token>(null);
   const [spotifyOptionState, setSpotifyOptionState] = useState(null);
@@ -38,6 +39,7 @@ const Option: FC = () => {
           image: { url: getRandomInstalledGif() },
         },
       };
+
       chrome.runtime.sendMessage({
         type: 'showDialog',
         data: dialog,
@@ -316,8 +318,7 @@ const Option: FC = () => {
                 We need your Love, we need your support.{' '}
                 <button
                   onClick={() => {
-                    window.location.href =
-                      'https://www.paypal.com/paypalme/volkanakintr/5USD?locale.x=en_US';
+                    window.location.href = URLS.DONATION_PAYPAL;
                     ReactGA.event({
                       category: 'Options',
                       action: 'Donate Us Clicked',

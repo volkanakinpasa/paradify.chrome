@@ -128,6 +128,7 @@ const getRandomSuccessGif = (): string => {
   const index = Math.floor(Math.random() * images.length);
   return images[index];
 };
+
 const getRandomFailedGif = (): string => {
   const images = [
     'https://media.giphy.com/media/14uQ3cOFteDaU/giphy.gif',
@@ -157,6 +158,15 @@ const getRandomErrorGif = (): string => {
   return images[index];
 };
 
+const getRandomDonationGif = (): string => {
+  const images = [
+    'https://media.giphy.com/media/iFyQMfqxYFhO2b4o3T/giphy.gif',
+    'https://media.giphy.com/media/l1KdaNvn6cDYMX3PO/giphy.gif',
+  ];
+  const index = Math.floor(Math.random() * images.length);
+  return images[index];
+};
+
 export {
   initializeReactGA,
   getSearchTextFromTrackInfo,
@@ -168,4 +178,5 @@ export {
   getRandomFailedGif,
   getRandomInstalledGif,
   getRandomErrorGif,
+  getRandomDonationGif,
 };

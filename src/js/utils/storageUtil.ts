@@ -1,6 +1,7 @@
 import { Token } from '../interfaces';
 import {
   EXTENSION_INSTALLED,
+  SAVED_COUNT,
   SPOTIFY_ICON_CLICK_ACTION_OPTION,
   SPOTIFY_TOKEN,
 } from './constants';
@@ -34,6 +35,17 @@ const setSpotifyToken = async (token: Token): Promise<void> =>
 const getSpotifyOption = async (): Promise<string> =>
   await getStorage(SPOTIFY_ICON_CLICK_ACTION_OPTION);
 
+const getSavedCount = async (): Promise<number> => {
+  try {
+    const count = await getStorage(SAVED_COUNT);
+    console.log({ count });
+
+    return count ?? 0;
+  } catch {
+    return 0;
+  }
+};
+
 const isInstalled = async (): Promise<boolean> => {
   const installedInfo: string = await getStorage(EXTENSION_INSTALLED);
   return installedInfo ? true : false;
@@ -43,6 +55,11 @@ const setIsInstalled = async (): Promise<void> =>
 
 const setSpotifyIconClickActionOption = async (option: string): Promise<void> =>
   await setStorage(SPOTIFY_ICON_CLICK_ACTION_OPTION, option);
+
+const increaseSavedCount = async (): Promise<void> => {
+  let count = await getSavedCount();
+  await setStorage(SAVED_COUNT, ++count);
+};
 
 const removeStorage = (key: string) => {
   new Promise<void>((resolve) => {
@@ -82,8 +99,10 @@ const waitAndGetFirstLoginResponse = async () => {
 const storageUtil = {
   getSpotifyToken,
   getSpotifyOption,
+  getSavedCount,
   setSpotifyIconClickActionOption,
   setSpotifyToken,
+  increaseSavedCount,
   removeSpotifyToken,
   removeSpotifyOption,
   waitAndGetFirstLoginResponse,
