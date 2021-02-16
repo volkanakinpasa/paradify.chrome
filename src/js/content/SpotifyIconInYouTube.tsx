@@ -109,7 +109,7 @@ const SpotifyIconInYouTube: FC = () => {
       message: {
         title: 'Please Donate to Paradify',
         text:
-          'We need your love, we need your support in order to keep Paradify on and effort our costs',
+          'We need your love, we need your support to keep Paradify on and effort our costs',
         image: { url: getRandomDonationGif() },
         link: { href: URLS.DONATION_PAYPAL, text: 'Please Donate to Paradify' },
       },
